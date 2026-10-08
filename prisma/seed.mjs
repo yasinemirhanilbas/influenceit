@@ -3,6 +3,7 @@
 // Run with: npm run db:seed (or npm run reset to wipe and refill).
 import { PrismaClient } from "@prisma/client";
 import { PrismaBetterSqlite3 } from "@prisma/adapter-better-sqlite3";
+import { hashPassword } from "../lib/password.mjs";
 
 const adapter = new PrismaBetterSqlite3({
   url: process.env.DATABASE_URL ?? "file:./dev.db",
@@ -10,34 +11,36 @@ const adapter = new PrismaBetterSqlite3({
 const db = new PrismaClient({ adapter });
 
 const CURRENCY = "TRY";
+// Every seed account uses this shared demo password. Emails are <slug>@example.com.
+const DEMO_PASSWORD = "demo1234";
 const CITIES = ["Istanbul", "Ankara", "Izmir", "Bursa", "Antalya", "Istanbul", "Izmir", "Ankara"];
 
 // slug | name | handle | niche | followers | rating | completedOrders | deliveryDays | startingPrice | avatarShape | avatarBg | avatarFg
 const CREATORS = [
-  ["mira-solis", "Mira Solis", "@mira.solis", "Beauty", 42100, 4.9, 86, 3, 2500, "circle", "#F4C7B8", "#1C1917"],
+  ["mira-solis", "Mira Solis", "@mira.solis", "Beauty", 42100, 4.9, 86, 3, 2500, "circle", "#F4C2D0", "#22111A"],
   ["arda-valen", "Arda Valen", "@arda.valen", "Tech", 76500, 4.8, 64, 4, 4800, "arch", "#7A1F3D", "#FFFFFF"],
-  ["eylul-rowan", "Eylül Rowan", "@eylul.rowan", "Food", 18400, 5.0, 41, 2, 1200, "square", "#E9B949", "#1C1917"],
-  ["kaan-hollis", "Kaan Hollis", "@kaan.hollis", "Fitness", 31900, 4.7, 58, 3, 2000, "circle", "#F2542D", "#1C1917"],
-  ["lale-brandt", "Lale Brandt", "@lale.brandt", "Travel", 58200, 4.9, 73, 5, 3600, "arch", "#DCCDB6", "#1C1917"],
-  ["deniz-faro", "Deniz Faro", "@deniz.faro", "Home", 24700, 4.8, 35, 3, 1800, "square", "#1C1917", "#FBF7F0"],
-  ["zeynep-calder", "Zeynep Calder", "@zeynep.calder", "Beauty", 27300, 4.8, 52, 3, 1500, "square", "#F4C7B8", "#1C1917"],
-  ["emre-quill", "Emre Quill", "@emre.quill", "Tech", 612000, 4.6, 97, 5, 9500, "circle", "#22111A", "#FBF7F0"],
-  ["defne-harlow", "Defne Harlow", "@defne.harlow", "Fitness", 38600, 4.9, 44, 2, 2200, "arch", "#E9B949", "#1C1917"],
-  ["selin-marlow", "Selin Marlow", "@selin.marlow", "Beauty", 33400, 4.7, 39, 3, 1700, "circle", "#DCCDB6", "#1C1917"],
-  ["baran-oakley", "Baran Oakley", "@baran.oakley", "Tech", 51200, 4.8, 47, 4, 3900, "arch", "#22111A", "#FBF7F0"],
-  ["nehir-alden", "Nehir Alden", "@nehir.alden", "Food", 22100, 4.9, 61, 2, 1400, "square", "#F2542D", "#1C1917"],
+  ["eylul-rowan", "Eylül Rowan", "@eylul.rowan", "Food", 18400, 5.0, 41, 2, 1200, "square", "#E9809F", "#22111A"],
+  ["kaan-hollis", "Kaan Hollis", "@kaan.hollis", "Fitness", 31900, 4.7, 58, 3, 2000, "circle", "#B0365B", "#FFFFFF"],
+  ["lale-brandt", "Lale Brandt", "@lale.brandt", "Travel", 58200, 4.9, 73, 5, 3600, "arch", "#D9A5B8", "#22111A"],
+  ["deniz-faro", "Deniz Faro", "@deniz.faro", "Home", 24700, 4.8, 35, 3, 1800, "square", "#F8E1E8", "#5A1229"],
+  ["zeynep-calder", "Zeynep Calder", "@zeynep.calder", "Beauty", 27300, 4.8, 52, 3, 1500, "square", "#F4C2D0", "#22111A"],
+  ["emre-quill", "Emre Quill", "@emre.quill", "Tech", 612000, 4.6, 97, 5, 9500, "circle", "#8E2748", "#FFFFFF"],
+  ["defne-harlow", "Defne Harlow", "@defne.harlow", "Fitness", 38600, 4.9, 44, 2, 2200, "arch", "#E9809F", "#22111A"],
+  ["selin-marlow", "Selin Marlow", "@selin.marlow", "Beauty", 33400, 4.7, 39, 3, 1700, "circle", "#D9A5B8", "#22111A"],
+  ["baran-oakley", "Baran Oakley", "@baran.oakley", "Tech", 51200, 4.8, 47, 4, 3900, "arch", "#8E2748", "#FFFFFF"],
+  ["nehir-alden", "Nehir Alden", "@nehir.alden", "Food", 22100, 4.9, 61, 2, 1400, "square", "#B0365B", "#FFFFFF"],
   ["tolga-reeve", "Tolga Reeve", "@tolga.reeve", "Fitness", 87400, 4.6, 70, 4, 5200, "circle", "#7A1F3D", "#FFFFFF"],
-  ["ada-winslow", "Ada Winslow", "@ada.winslow", "Travel", 41800, 4.8, 55, 5, 2900, "arch", "#E9B949", "#1C1917"],
-  ["cem-ardent", "Cem Ardent", "@cem.ardent", "Home", 19600, 4.7, 28, 3, 1300, "square", "#DCCDB6", "#1C1917"],
-  ["ece-thornton", "Ece Thornton", "@ece.thornton", "Home", 64300, 4.9, 82, 3, 4100, "circle", "#F4C7B8", "#1C1917"],
-  ["onur-vale", "Onur Vale", "@onur.vale", "Tech", 98500, 4.5, 66, 4, 4600, "arch", "#1C1917", "#FBF7F0"],
-  ["ipek-marden", "İpek Marden", "@ipek.marden", "Beauty", 15800, 4.8, 31, 2, 1000, "square", "#E9B949", "#1C1917"],
-  ["burak-linden", "Burak Linden", "@burak.linden", "Tech", 29700, 4.7, 36, 3, 2300, "circle", "#F2542D", "#1C1917"],
+  ["ada-winslow", "Ada Winslow", "@ada.winslow", "Travel", 41800, 4.8, 55, 5, 2900, "arch", "#E9809F", "#22111A"],
+  ["cem-ardent", "Cem Ardent", "@cem.ardent", "Home", 19600, 4.7, 28, 3, 1300, "square", "#D9A5B8", "#22111A"],
+  ["ece-thornton", "Ece Thornton", "@ece.thornton", "Home", 64300, 4.9, 82, 3, 4100, "circle", "#F4C2D0", "#22111A"],
+  ["onur-vale", "Onur Vale", "@onur.vale", "Tech", 98500, 4.5, 66, 4, 4600, "arch", "#F8E1E8", "#5A1229"],
+  ["ipek-marden", "İpek Marden", "@ipek.marden", "Beauty", 15800, 4.8, 31, 2, 1000, "square", "#E9809F", "#22111A"],
+  ["burak-linden", "Burak Linden", "@burak.linden", "Tech", 29700, 4.7, 36, 3, 2300, "circle", "#B0365B", "#FFFFFF"],
   ["selma-prescott", "Selma Prescott", "@selma.prescott", "Food", 47200, 4.9, 59, 3, 2700, "arch", "#7A1F3D", "#FFFFFF"],
-  ["yigit-calloway", "Yiğit Calloway", "@yigit.calloway", "Fitness", 23500, 4.6, 33, 2, 1600, "square", "#DCCDB6", "#1C1917"],
-  ["naz-fenwick", "Naz Fenwick", "@naz.fenwick", "Beauty", 35900, 4.8, 48, 3, 2400, "circle", "#22111A", "#FBF7F0"],
-  ["kerem-ashby", "Kerem Ashby", "@kerem.ashby", "Travel", 72600, 4.7, 62, 5, 4400, "arch", "#F4C7B8", "#1C1917"],
-  ["duru-kessler", "Duru Kessler", "@duru.kessler", "Tech", 26400, 4.8, 29, 3, 1900, "square", "#E9B949", "#1C1917"],
+  ["yigit-calloway", "Yiğit Calloway", "@yigit.calloway", "Fitness", 23500, 4.6, 33, 2, 1600, "square", "#D9A5B8", "#22111A"],
+  ["naz-fenwick", "Naz Fenwick", "@naz.fenwick", "Beauty", 35900, 4.8, 48, 3, 2400, "circle", "#8E2748", "#FFFFFF"],
+  ["kerem-ashby", "Kerem Ashby", "@kerem.ashby", "Travel", 72600, 4.7, 62, 5, 4400, "arch", "#F4C2D0", "#22111A"],
+  ["duru-kessler", "Duru Kessler", "@duru.kessler", "Tech", 26400, 4.8, 29, 3, 1900, "square", "#E9809F", "#22111A"],
 ];
 
 const BIOS = {
@@ -57,6 +60,20 @@ const BRANDS = [
   ["Kiln & Co.", "Home", 25000],
   ["Oakmoor Goods", "Home", 35000],
   ["Sunday Fig", "Beauty", 40000],
+  ["Quillon Studio", "Tech", 50000],
+  ["Pebblewick", "Home", 25000],
+];
+
+// Open jobs. brandIndex | niche | format | budget | deliveryDays | applicants | title | summary | titleTr | summaryTr
+const JOBS = [
+  [0, "Food", "reelStories", 3000, 5, 12, "Coffee subscription launch reel", "Show your morning routine with our new subscription box.", "Kahve aboneliği lansman reel'i", "Yeni abonelik kutumuzla sabah rutinini göster."],
+  [1, "Beauty", "tutorial", 2500, 4, 18, "Skincare routine tutorial", "A five-step evening routine with our new serum.", "Cilt bakım rutini eğitimi", "Yeni serumumuzla beş adımlı bir akşam rutini."],
+  [2, "Travel", "vlog", 4500, 7, 9, "Weekend city escape vlog", "Share a two-day trip using our travel tote.", "Hafta sonu şehir kaçamağı vlogu", "Seyahat çantamızla iki günlük bir gezi paylaş."],
+  [3, "Home", "photoSet", 3500, 6, 14, "Ceramic mugs photo set", "Styled kitchen shots of our new mug collection.", "Seramik kupa fotoğraf seti", "Yeni kupa koleksiyonumuz için şık mutfak kareleri."],
+  [4, "Fitness", "review", 2800, 5, 21, "Training bottle honest review", "Use our bottle for a week and tell us what you think.", "Antrenman matarası dürüst inceleme", "Matarayı bir hafta kullan ve ne düşündüğünü anlat."],
+  [5, "Food", "review", 1800, 3, 24, "Seasonal jam taste test", "A first taste of our autumn jam flavors.", "Mevsimlik reçel tadım testi", "Sonbahar reçel çeşitlerimizin ilk tadımı."],
+  [6, "Tech", "unboxing", 5200, 6, 7, "Desk gadget unboxing", "Unbox and set up our compact desk dock.", "Masa aksesuarı kutu açılımı", "Kompakt masa istasyonumuzu aç ve kur."],
+  [7, "Home", "reelStories", 2200, 4, 11, "Cozy corner room refresh", "Show how our throw blankets change a small corner.", "Rahat köşe yenileme", "Battaniyelerimizin küçük bir köşeyi nasıl değiştirdiğini göster."],
 ];
 
 // Package templates: price is a multiple of the creator's starting price (rounded to 50).
@@ -83,16 +100,19 @@ const ORDERS = [
 
 async function main() {
   // Wipe in dependency order so the seed can be re-run safely.
+  await db.application.deleteMany();
+  await db.job.deleteMany();
   await db.order.deleteMany();
   await db.package.deleteMany();
   await db.creatorProfile.deleteMany();
   await db.brandProfile.deleteMany();
   await db.user.deleteMany();
 
+  const passwordHash = await hashPassword(DEMO_PASSWORD);
   const creatorBySlug = new Map();
   for (const [index, row] of CREATORS.entries()) {
     const [slug, name, handle, niche, followers, rating, completedOrders, deliveryDays, startingPrice, avatarShape, avatarBg, avatarFg] = row;
-    const user = await db.user.create({ data: { role: "CREATOR", name } });
+    const user = await db.user.create({ data: { role: "CREATOR", name, email: `${slug}@example.com`, passwordHash } });
     const profile = await db.creatorProfile.create({
       data: {
         userId: user.id,
@@ -126,12 +146,39 @@ async function main() {
 
   const brands = [];
   for (const [companyName, industry, budget] of BRANDS) {
-    const user = await db.user.create({ data: { role: "BRAND", name: companyName } });
+    const user = await db.user.create({ data: { role: "BRAND", name: companyName, email: `${companyName.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "")}@example.com`, passwordHash } });
     brands.push(
       await db.brandProfile.create({
         data: { userId: user.id, companyName, industry, budgetAmount: budget, budgetCurrency: CURRENCY },
       }),
     );
+  }
+
+  // Applications: the first N creators (starting at a different place per job) apply to each job.
+  const creatorProfiles = [...creatorBySlug.values()];
+  for (const [jobIndex, row] of JOBS.entries()) {
+    const [brandIndex, niche, format, budget, deliveryDays, applicants, title, summary, titleTr, summaryTr] = row;
+    const job = await db.job.create({
+      data: {
+        brandId: brands[brandIndex].id,
+        title,
+        summary,
+        titleTr,
+        summaryTr,
+        niche,
+        format,
+        budgetAmount: budget,
+        budgetCurrency: CURRENCY,
+        deliveryDays,
+        createdAt: daysAgo(jobIndex + 1),
+      },
+    });
+    for (let n = 0; n < applicants; n += 1) {
+      const creator = creatorProfiles[(jobIndex * 3 + n) % creatorProfiles.length];
+      await db.application.create({
+        data: { jobId: job.id, creatorId: creator.id, message: "I would love to work on this brief." },
+      });
+    }
   }
 
   for (const [brandIndex, slug, packageIndex, status, brief, ago] of ORDERS) {
@@ -166,6 +213,8 @@ async function main() {
     brands: await db.brandProfile.count(),
     packages: await db.package.count(),
     orders: await db.order.count(),
+    jobs: await db.job.count(),
+    applications: await db.application.count(),
   };
   console.log("Seed complete:", counts);
 }

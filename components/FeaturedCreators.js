@@ -2,10 +2,11 @@ import Link from "next/link";
 import CreatorGrid from "./CreatorGrid";
 import SectionHeading from "./SectionHeading";
 import { getMessages } from "@/locales";
-import { creators } from "@/data/creators";
+import { getCreators } from "@/lib/queries";
 import { getRoutes } from "@/lib/routes";
 
-export default function FeaturedCreators({ lang }) {
+export default async function FeaturedCreators({ lang }) {
+  const creators = await getCreators(9);
   const messages = getMessages(lang);
   const routes = getRoutes(lang);
   const { featured } = messages;

@@ -28,6 +28,7 @@ const en = {
     supportEmail: "hello@influenceit.example",
     signUp: "Sign up",
     logIn: "Log in",
+    account: "My account",
     mainNavLabel: "Main navigation",
     menu: "Menu",
     languageLabel: "Language",
@@ -193,6 +194,24 @@ const en = {
     },
   },
 
+  profile: {
+    back: "All creators",
+    metaTitle: "{name} | InfluenceIt",
+    statsLabel: "Creator statistics",
+    followers: "Followers",
+    rating: "Rating",
+    completed: "Completed orders",
+    delivery: "Average delivery",
+    deliveryValue: "{days} days",
+    aboutHeading: "About",
+    packagesHeading: "Packages",
+    packagesNote: "Prices are fixed. Your payment is held in escrow until you approve the content.",
+    packageDelivery: "{days}-day delivery",
+    order: "Order this package",
+    orderHint: "Ordering needs a brand account. Sign-up takes a minute.",
+    cities: { Istanbul: "Istanbul", Ankara: "Ankara", Izmir: "Izmir", Bursa: "Bursa", Antalya: "Antalya" },
+  },
+
   comparison: {
     eyebrow: "Why InfluenceIt",
     heading: "Safer than a handshake deal",
@@ -326,40 +345,6 @@ const en = {
       vlog: "Short vlog",
       photoSet: "Photo set",
     },
-    items: {
-      b1: {
-        title: "Coffee subscription launch reel",
-        summary: "Show your morning routine with our new subscription box.",
-      },
-      b2: {
-        title: "Skincare routine tutorial",
-        summary: "A five-step evening routine with our new serum.",
-      },
-      b3: {
-        title: "Weekend city escape vlog",
-        summary: "Share a two-day trip using our travel tote.",
-      },
-      b4: {
-        title: "Ceramic mugs photo set",
-        summary: "Styled kitchen shots of our new mug collection.",
-      },
-      b5: {
-        title: "Training bottle honest review",
-        summary: "Use our bottle for a week and tell us what you think.",
-      },
-      b6: {
-        title: "Seasonal jam taste test",
-        summary: "A first taste of our autumn jam flavors.",
-      },
-      b7: {
-        title: "Desk gadget unboxing",
-        summary: "Unbox and set up our compact desk dock.",
-      },
-      b8: {
-        title: "Cozy corner room refresh",
-        summary: "Show how our throw blankets change a small corner.",
-      },
-    },
   },
 
   pages: {
@@ -399,6 +384,22 @@ const en = {
       title: "Sign up | InfluenceIt",
       description: "Join InfluenceIt as a brand or as a creator.",
     },
+    industry: "Industry",
+    city: "City",
+    cityPlaceholder: "Choose a city",
+    submitting: "Creating your account...",
+    errors: {
+      name: "Please enter your first and last name.",
+      email: "Please enter a valid email address.",
+      password: "Your password needs at least 8 characters.",
+      terms: "Please accept the terms to continue.",
+      emailTaken: "An account with this email already exists. Try logging in.",
+      niche: "Please choose a niche.",
+      company: "Please enter your brand name.",
+      handle: "Use 2 to 30 letters, numbers, dots or underscores for your handle.",
+      city: "Please choose a city.",
+      generic: "Something went wrong. Please try again.",
+    },
   },
 
   signup: {
@@ -431,10 +432,7 @@ const en = {
     haveAccount: "Already have an account?",
     logIn: "Log in",
     submit: "Create my account",
-    successTitle: "Thanks, {name}!",
-    successText: "This is a prototype, so nothing was saved or sent.",
-    startOver: "Start over",
-    note: "Prototype form. Nothing is stored.",
+    note: "Prototype: all accounts and data stay on this computer.",
   },
 
   login: {
@@ -447,7 +445,41 @@ const en = {
     submit: "Log in",
     noAccount: "No account yet?",
     signUp: "Sign up",
-    demoMessage: "Login is not live in this prototype. Nothing was sent or stored.",
+    submitting: "Logging in...",
+    errors: { invalid: "Email or password is not correct." },
+    demoAccounts: "Demo accounts (password demo1234): mira-solis@example.com is a creator, northloom-coffee@example.com is a brand.",
+  },
+
+  account: {
+    title: "My account | InfluenceIt",
+    eyebrow: "My account",
+    welcome: "Welcome, {name}",
+    roleBrand: "Brand account",
+    roleCreator: "Creator account",
+    emailLabel: "Email",
+    companyLabel: "Brand",
+    industryLabel: "Industry",
+    handleLabel: "Handle",
+    nicheLabel: "Niche",
+    cityLabel: "City",
+    jobsLabel: "Open jobs posted",
+    ordersLabel: "Orders",
+    applicationsLabel: "Applications sent",
+    brandNext: "Find a creator and order a package.",
+    creatorNext: "Browse open jobs and apply.",
+    creatorNoPackages: "Your profile is hidden from the creators list until you add packages. Package editing is coming soon.",
+    findCreators: "Browse creators",
+    browseJobs: "Browse open jobs",
+    viewProfile: "View my public profile",
+    logOut: "Log out",
+    loading: "Loading your account...",
+  },
+
+  notFound: {
+    heading: "This page does not exist",
+    text: "The address may be mistyped or the page may have moved.",
+    home: "Back to home",
+    jobs: "Browse open jobs",
   },
 
   footer: {

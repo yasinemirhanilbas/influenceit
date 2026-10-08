@@ -2,6 +2,6 @@
 export const stats = [
   { id: "openJobs", value: 38, kind: "number" },
   { id: "approvalRate", value: 0.96, kind: "percent" },
-  { id: "verifiedCreators", value: 1200, kind: "compact" },
+  { id: "verifiedCreators", value: 1200, kind: "number" },
   { id: "escrowShare", value: 1, kind: "percent" },
 ];

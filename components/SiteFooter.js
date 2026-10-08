@@ -1,5 +1,7 @@
+import { Suspense } from "react";
 import Link from "next/link";
 import LanguageSwitcher from "./LanguageSwitcher";
+import { LanguageSwitcherFallback } from "./NavFallbacks";
 import { getMessages } from "@/locales";
 import { getNavLinks, getRoutes } from "@/lib/routes";
 
@@ -18,7 +20,9 @@ export default function SiteFooter({ lang }) {
           </Link>
           <p className="mt-3 max-w-xs text-ink-soft">{footer.tagline}</p>
           <div className="mt-6">
-            <LanguageSwitcher lang={lang} />
+            <Suspense fallback={<LanguageSwitcherFallback lang={lang} />}>
+              <LanguageSwitcher lang={lang} />
+            </Suspense>
           </div>
         </div>
 

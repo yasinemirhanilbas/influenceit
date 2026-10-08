@@ -2,6 +2,37 @@
 
 Approved changes, newest first. Format: date, what, files, why.
 
+## 2026-10-08 (real login and sign-up)
+- Sign-up and log-in now work for real. Sign-up asks for the extra details each side needs: brands give a brand name and industry; creators give a handle, niche and city (a public profile is created, hidden from the creators list until packages exist). Passwords are hashed with Node's built-in `scrypt` (`lib/password.mjs`), so no new package was needed. Login is a signed, HTTP-only cookie valid for 7 days (`lib/session.js`, optional `SESSION_SECRET` in `.env`).
+- The system knows the account type: after log-in or sign-up everyone lands on `/{lang}/account`, which shows brand or creator details, a log-out button and the next step. The header shows "My account" when logged in; the mobile menu too.
+- Seed accounts: every seed user has `<slug>@example.com` (brands: for example `northloom-coffee@example.com`) and the shared demo password `demo1234`; the log-in page shows two examples. `npm run reset` is needed again.
+- Verified end to end against a real build: wrong password, correct login for creator and brand (both languages), duplicate email, short password, new creator and brand sign-up, tampered cookie rejected, log-out clears the cookie.
+  - Files: `app/[lang]/auth/actions.js`, `app/[lang]/account/page.js`, `components/SignupForm.js`, `components/LoginPanels.js`, `components/HeaderAccount.js`, `components/SiteHeader.js`, `components/MobileNav.js`, `lib/password.mjs`, `lib/session.js`, `lib/options.js`, `lib/routes.js`, `lib/queries.js`, `prisma/seed.mjs`, `.env.example`, `locales/en.js`, `locales/tr.js`
+
+## 2026-10-08 (creator profile page)
+- New page `/{lang}/creators/[slug]`: avatar, verified badge, niche and city, four stats, bio, three packages with fixed prices and delivery days. "Order this package" goes to the brand sign-up for now (ordering comes later). Pages are prebuilt for every creator with `generateStaticParams`.
+- Creator cards are clickable (the name is a stretched link; copies in the sliding row stay out of the tab order). Added `getCreator`, `getCreatorSlugs` in `lib/queries.js`, `routes.creatorProfile(slug)`, and a `profile` section in both locale files (city names are translated there).
+- Known limit: an unknown slug (for example `/en/creators/nobody`) shows the 404 page with `noindex`, but the HTTP status is 200, because the page is streamed under Cache Components.
+  - Files: `app/[lang]/creators/[slug]/page.js`, `components/CreatorCard.js`, `components/CreatorGrid.js`, `lib/queries.js`, `lib/routes.js`, `locales/en.js`, `locales/tr.js`
+
+## 2026-10-08 (pages read from the database)
+- Home, creators and jobs pages now read from the database instead of `data/`. New `lib/queries.js` (`getCreators`, `getOpenJobs`) with `"use cache"` so pages still prerender; writes will refresh it with `updateTag("creators" | "jobs")`.
+- Schema (approved): new `Job` and `Application` models; `User` gets optional `email` (unique) and `passwordHash` for the coming login. Seed adds 2 brands (Quillon Studio, Pebblewick), 8 open jobs with English and Turkish title/summary, 116 applications, and dark-theme avatar colors. `npm run reset` is needed after pulling.
+- Job texts moved from `locales` (`jobs.items`) into the database (`title`/`summary` + optional `titleTr`/`summaryTr`).
+  - Files: `prisma/schema.prisma`, `prisma/seed.mjs`, `lib/queries.js`, `components/FeaturedCreators.js`, `components/OpenBriefsSection.js`, `components/BriefCard.js`, `app/[lang]/creators/page.js`, `app/[lang]/jobs/page.js`, `locales/en.js`, `locales/tr.js`
+  - `data/creators.js` and `data/briefs.js` are no longer used (deletion waits for approval).
+
+## 2026-10-08 (404 buttons removed)
+- Global 404 page no longer has the English / Turkish buttons; it only shows the 404 text in both languages. File: `app/global-not-found.js`.
+
+## 2026-10-08 (active menu, 404 page)
+- Top navigation highlights the page you are on (`aria-current="page"`, underline); same in the mobile menu. Header and footer client parts that read the address are wrapped in `Suspense` with plain fallbacks (`components/NavFallbacks.js`).
+- New 404 pages: `app/[lang]/not-found.js` (inside the site layout, in the visitor's language) and `app/global-not-found.js` for addresses that match no route (shows English and Turkish). Needed `experimental.globalNotFound: true` in `next.config.mjs`, because the root layout is a dynamic `[lang]` segment.
+  - Files: `components/NavLinks.js`, `components/NavFallbacks.js`, `components/NotFoundContent.js`, `components/SiteHeader.js`, `components/SiteFooter.js`, `components/MobileNav.js`, `app/[lang]/not-found.js`, `app/global-not-found.js`, `next.config.mjs`, `locales/` (`notFound`)
+
+## 2026-10-08 (design cleanup)
+- Hero headline smaller so the Turkish text no longer takes six lines; arrow icons in buttons no longer shrink; "1,2 B" verified creators shown as "1.200"; creator cards show followers under the handle so all cards have the same height. Files: `components/HeroSection.js`, `components/Button.js`, `components/CreatorCard.js`, `data/stats.js`.
+
 ## 2026-10-08 (database, Phase 1)
 - Added the Prisma + SQLite database layer: schema with `User`, `CreatorProfile`, `BrandProfile`, `Package`, `Order`; a fixed seed (24 creators, 6 brands, 72 packages, 8 orders in all statuses); `npm run reset` wipes and refills the database.
 - `status` and `role` are plain strings; allowed values are in `lib/orderStatus.js` (state machine comes in Phase 3).

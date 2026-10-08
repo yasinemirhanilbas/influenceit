@@ -14,6 +14,9 @@ model User {
   id        Int      @id @default(autoincrement())
   role      String // "BRAND" or "CREATOR"
   name      String
+  // Login fields. Seed accounts get the shared demo password (see prisma/seed.mjs).
+  email        String? @unique
+  passwordHash String?
   createdAt DateTime @default(now())
 
   creatorProfile CreatorProfile?
@@ -38,8 +41,9 @@ model CreatorProfile {
   avatarFg        String
 
   user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  packages Package[]
-  orders   Order[]
+  packages     Package[]
+  orders       Order[]
+  applications Application[]
 
   @@index([niche])
   @@index([city])
@@ -55,6 +59,7 @@ model BrandProfile {
 
   user   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
   orders Order[]
+  jobs   Job[]
 }
 
 model Package {
@@ -96,4 +101,43 @@ model Order {
   @@index([brandId])
   @@index([creatorId])
   @@index([status])
+}
+
+// An open brief posted by a brand. Creators apply to it.
+// Title and summary are stored in one language; the *Tr columns hold an optional Turkish copy.
+model Job {
+  id             Int      @id @default(autoincrement())
+  brandId        Int
+  title          String
+  summary        String
+  titleTr        String?
+  summaryTr      String?
+  niche          String
+  format         String // key of jobs.formats in locales (for example "reelStories")
+  budgetAmount   Int
+  budgetCurrency String   @default("TRY")
+  deliveryDays   Int
+  status         String   @default("OPEN") // "OPEN" or "CLOSED"
+  createdAt      DateTime @default(now())
+
+  brand        BrandProfile  @relation(fields: [brandId], references: [id], onDelete: Cascade)
+  applications Application[]
+
+  @@index([brandId])
+  @@index([status])
+  @@index([niche])
+}
+
+model Application {
+  id        Int      @id @default(autoincrement())
+  jobId     Int
+  creatorId Int
+  message   String   @default("")
+  createdAt DateTime @default(now())
+
+  job     Job            @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  creator CreatorProfile @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+
+  @@unique([jobId, creatorId])
+  @@index([creatorId])
 }

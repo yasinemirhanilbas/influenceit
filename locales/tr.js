@@ -28,6 +28,7 @@ const tr = {
     supportEmail: "hello@influenceit.example",
     signUp: "Kayıt ol",
     logIn: "Giriş yap",
+    account: "Hesabım",
     mainNavLabel: "Ana gezinme",
     menu: "Menü",
     languageLabel: "Dil",
@@ -193,6 +194,24 @@ const tr = {
     },
   },
 
+  profile: {
+    back: "Tüm içerik üreticiler",
+    metaTitle: "{name} | InfluenceIt",
+    statsLabel: "İçerik üretici istatistikleri",
+    followers: "Takipçi",
+    rating: "Puan",
+    completed: "Tamamlanan sipariş",
+    delivery: "Ortalama teslimat",
+    deliveryValue: "{days} gün",
+    aboutHeading: "Hakkında",
+    packagesHeading: "Paketler",
+    packagesNote: "Fiyatlar sabit. Ödemen, içeriği onaylayana kadar emanette tutulur.",
+    packageDelivery: "{days} günde teslim",
+    order: "Bu paketi sipariş et",
+    orderHint: "Sipariş vermek için marka hesabı gerekir. Kayıt bir dakika sürer.",
+    cities: { Istanbul: "İstanbul", Ankara: "Ankara", Izmir: "İzmir", Bursa: "Bursa", Antalya: "Antalya" },
+  },
+
   comparison: {
     eyebrow: "Neden InfluenceIt",
     heading: "Sözlü anlaşmadan çok daha güvenli",
@@ -326,40 +345,6 @@ const tr = {
       vlog: "Kısa vlog",
       photoSet: "Fotoğraf seti",
     },
-    items: {
-      b1: {
-        title: "Kahve aboneliği lansman reel'i",
-        summary: "Yeni abonelik kutumuzla sabah rutinini göster.",
-      },
-      b2: {
-        title: "Cilt bakım rutini eğitimi",
-        summary: "Yeni serumumuzla beş adımlı bir akşam rutini.",
-      },
-      b3: {
-        title: "Hafta sonu şehir kaçamağı vlogu",
-        summary: "Seyahat çantamızla iki günlük bir gezi paylaş.",
-      },
-      b4: {
-        title: "Seramik kupa fotoğraf seti",
-        summary: "Yeni kupa koleksiyonumuz için şık mutfak kareleri.",
-      },
-      b5: {
-        title: "Antrenman matarası dürüst inceleme",
-        summary: "Matarayı bir hafta kullan ve ne düşündüğünü anlat.",
-      },
-      b6: {
-        title: "Mevsimlik reçel tadım testi",
-        summary: "Sonbahar reçel çeşitlerimizin ilk tadımı.",
-      },
-      b7: {
-        title: "Masa aksesuarı kutu açılımı",
-        summary: "Kompakt masa istasyonumuzu aç ve kur.",
-      },
-      b8: {
-        title: "Rahat köşe yenileme",
-        summary: "Battaniyelerimizin küçük bir köşeyi nasıl değiştirdiğini göster.",
-      },
-    },
   },
 
   pages: {
@@ -399,6 +384,22 @@ const tr = {
       title: "Kayıt ol | InfluenceIt",
       description: "InfluenceIt'e marka ya da içerik üretici olarak katıl.",
     },
+    industry: "Sektör",
+    city: "Şehir",
+    cityPlaceholder: "Şehir seç",
+    submitting: "Hesabın oluşturuluyor...",
+    errors: {
+      name: "Lütfen adını ve soyadını gir.",
+      email: "Lütfen geçerli bir e-posta adresi gir.",
+      password: "Şifren en az 8 karakter olmalı.",
+      terms: "Devam etmek için koşulları kabul etmelisin.",
+      emailTaken: "Bu e-posta ile zaten bir hesap var. Giriş yapmayı dene.",
+      niche: "Lütfen bir nişe seç.",
+      company: "Lütfen marka adını gir.",
+      handle: "Kullanıcı adın için 2 ile 30 arasında harf, rakam, nokta veya alt çizgi kullan.",
+      city: "Lütfen bir şehir seç.",
+      generic: "Bir şeyler ters gitti. Lütfen tekrar dene.",
+    },
   },
 
   signup: {
@@ -431,10 +432,7 @@ const tr = {
     haveAccount: "Zaten hesabın var mı?",
     logIn: "Giriş yap",
     submit: "Hesabımı oluştur",
-    successTitle: "Teşekkürler, {name}!",
-    successText: "Bu bir prototip, bu yüzden hiçbir şey kaydedilmedi ya da gönderilmedi.",
-    startOver: "Baştan başla",
-    note: "Prototip form. Hiçbir şey saklanmaz.",
+    note: "Prototip: tüm hesaplar ve veriler bu bilgisayarda kalır.",
   },
 
   login: {
@@ -447,7 +445,41 @@ const tr = {
     submit: "Giriş yap",
     noAccount: "Henüz hesabın yok mu?",
     signUp: "Kayıt ol",
-    demoMessage: "Bu prototipte giriş çalışmıyor. Hiçbir şey gönderilmedi ya da saklanmadı.",
+    submitting: "Giriş yapılıyor...",
+    errors: { invalid: "E-posta veya şifre hatalı." },
+    demoAccounts: "Demo hesaplar (şifre demo1234): mira-solis@example.com bir içerik üreticidir, northloom-coffee@example.com bir markadır.",
+  },
+
+  account: {
+    title: "Hesabım | InfluenceIt",
+    eyebrow: "Hesabım",
+    welcome: "Hoş geldin, {name}",
+    roleBrand: "Marka hesabı",
+    roleCreator: "İçerik üretici hesabı",
+    emailLabel: "E-posta",
+    companyLabel: "Marka",
+    industryLabel: "Sektör",
+    handleLabel: "Kullanıcı adı",
+    nicheLabel: "Niş",
+    cityLabel: "Şehir",
+    jobsLabel: "Yayınlanan açık iş",
+    ordersLabel: "Sipariş",
+    applicationsLabel: "Gönderilen başvuru",
+    brandNext: "Bir içerik üretici bul ve paket sipariş et.",
+    creatorNext: "Açık işlere göz at ve başvur.",
+    creatorNoPackages: "Paket ekleyene kadar profilin içerik üretici listesinde görünmez. Paket düzenleme yakında geliyor.",
+    findCreators: "İçerik üreticilere göz at",
+    browseJobs: "Açık işlere göz at",
+    viewProfile: "Herkese açık profilimi gör",
+    logOut: "Çıkış yap",
+    loading: "Hesabın yükleniyor...",
+  },
+
+  notFound: {
+    heading: "Bu sayfa mevcut değil",
+    text: "Adres yanlış yazılmış olabilir ya da sayfa taşınmış olabilir.",
+    home: "Ana sayfaya dön",
+    jobs: "Açık işlere göz at",
   },
 
   footer: {

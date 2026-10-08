@@ -81,7 +81,7 @@ export default function CreatorGrid({ creators, lang }) {
               className="w-72 shrink-0 pr-5 sm:w-80"
               {...(item.duplicate ? { "aria-hidden": "true", "data-duplicate": "" } : {})}
             >
-              <CreatorCard creator={item.creator} lang={lang} />
+              <CreatorCard creator={item.creator} lang={lang} duplicate={item.duplicate} />
             </li>
           ))}
         </ul>

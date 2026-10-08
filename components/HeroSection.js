@@ -25,7 +25,7 @@ export default function HeroSection({ lang }) {
           </p>
           <h1
             id="hero-heading"
-            className="mt-5 font-display text-[2.6rem] font-semibold leading-[1.05] tracking-tight sm:text-7xl"
+            className="mt-5 font-display text-[2.4rem] font-semibold leading-[1.08] tracking-tight sm:text-5xl lg:text-6xl"
           >
             <span className="block">{hero.headlineLead}</span>
             <span className="text-gradient block pb-1 italic">{hero.headlineEmphasis}</span>

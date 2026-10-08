@@ -1,9 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useActionState, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { getMessages, interpolate } from "@/locales";
+import { signUpAction } from "@/app/[lang]/auth/actions";
+import { CITIES, NICHES } from "@/lib/options";
 import { getRoutes } from "@/lib/routes";
 
 const inputClass =
@@ -59,36 +61,11 @@ function RoleCard({ active, onClick, icon, title, text }) {
 }
 
 export default function SignupForm({ lang }) {
-  const { signup } = getMessages(lang);
+  const { signup, featured, profile } = getMessages(lang);
   const routes = getRoutes(lang);
   const params = useSearchParams();
   const [role, setRole] = useState(params.get("role") === "creator" ? "creator" : "brand");
-  const [doneName, setDoneName] = useState(null);
-
-  // Prototype: nothing is sent or stored.
-  function handleSubmit(event) {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    setDoneName(String(data.get("firstName") ?? ""));
-  }
-
-  if (doneName !== null) {
-    return (
-      <div className="rounded-card border border-line bg-card p-8 text-center shadow-card" role="status">
-        <h2 className="font-display text-3xl font-semibold">
-          {interpolate(signup.successTitle, { name: doneName })}
-        </h2>
-        <p className="mt-3 text-ink-soft">{signup.successText}</p>
-        <button
-          type="button"
-          onClick={() => setDoneName(null)}
-          className="mt-6 min-h-12 rounded-full border border-line px-6 font-semibold hover:border-brand focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-light"
-        >
-          {signup.startOver}
-        </button>
-      </div>
-    );
-  }
+  const [state, formAction, pending] = useActionState(signUpAction, null);
 
   return (
     <div>
@@ -102,7 +79,9 @@ export default function SignupForm({ lang }) {
         </Link>
       </p>
 
-      <form onSubmit={handleSubmit} className="rounded-card border border-line bg-card p-6 shadow-card sm:p-8">
+      <form action={formAction} className="rounded-card border border-line bg-card p-6 shadow-card sm:p-8">
+        <input type="hidden" name="lang" value={lang} />
+        <input type="hidden" name="role" value={role} />
         <fieldset>
           <legend className="text-sm font-semibold">{signup.roleLabel}</legend>
           <div className="mt-3 grid gap-3 sm:grid-cols-2">
@@ -143,6 +122,40 @@ export default function SignupForm({ lang }) {
             <input name="password" type="password" required minLength={8} autoComplete="new-password" className={inputClass} />
             <span className="mt-1 block text-sm text-ink-soft">{signup.passwordHint}</span>
           </label>
+
+          {role === "brand" ? (
+            <label className="block">
+              <span className="text-sm font-semibold">{signup.company}</span>
+              <input name="companyName" type="text" required maxLength={60} className={inputClass} />
+            </label>
+          ) : (
+            <label className="block">
+              <span className="text-sm font-semibold">{signup.handle}</span>
+              <input name="handle" type="text" required placeholder={signup.handlePlaceholder} autoComplete="off" className={inputClass} />
+            </label>
+          )}
+          <div className={`grid gap-5 ${role === "creator" ? "sm:grid-cols-2" : ""}`}>
+            <label className="block">
+              <span className="text-sm font-semibold">{role === "brand" ? signup.industry : signup.niche}</span>
+              <select name="niche" required defaultValue="" className={inputClass}>
+                <option value="" disabled>{signup.nichePlaceholder}</option>
+                {NICHES.map((niche) => (
+                  <option key={niche} value={niche}>{featured.niches[niche]}</option>
+                ))}
+              </select>
+            </label>
+            {role === "creator" ? (
+              <label className="block">
+                <span className="text-sm font-semibold">{signup.city}</span>
+                <select name="city" required defaultValue="" className={inputClass}>
+                  <option value="" disabled>{signup.cityPlaceholder}</option>
+                  {CITIES.map((city) => (
+                    <option key={city} value={city}>{profile.cities[city]}</option>
+                  ))}
+                </select>
+              </label>
+            ) : null}
+          </div>
         </div>
 
         <label className="mt-6 flex items-start gap-3">
@@ -154,11 +167,18 @@ export default function SignupForm({ lang }) {
           {role === "brand" ? signup.infoBrand : signup.infoCreator}
         </p>
 
+        {state?.error ? (
+          <p role="alert" className="mt-6 rounded-xl border border-brand-light bg-brand-soft p-4 text-sm text-brand-dark">
+            {signup.errors[state.error] ?? signup.errors.generic}
+          </p>
+        ) : null}
+
         <button
           type="submit"
-          className="bg-brand-gradient mt-6 min-h-12 w-full rounded-full px-7 font-semibold text-white shadow-glow transition hover:brightness-110 active:translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-light"
+          disabled={pending}
+          className="bg-brand-gradient disabled:opacity-60 mt-6 min-h-12 w-full rounded-full px-7 font-semibold text-white shadow-glow transition hover:brightness-110 active:translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-light"
         >
-          {signup.submit}
+          {pending ? signup.submitting : signup.submit}
         </button>
         <p className="mt-4 text-center text-sm text-ink-soft">{signup.note}</p>
       </form>

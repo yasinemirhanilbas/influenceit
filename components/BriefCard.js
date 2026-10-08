@@ -8,7 +8,6 @@ export default function BriefCard({ brief, lang }) {
   const routes = getRoutes(lang);
   const { jobs, featured } = messages;
   const intl = getIntlLocale(lang);
-  const copy = jobs.items[brief.id];
 
   return (
     <article className="flex h-full flex-col rounded-card border border-line bg-card p-6 shadow-card transition-transform duration-[420ms] ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-1.5">
@@ -19,8 +18,8 @@ export default function BriefCard({ brief, lang }) {
         </span>
       </div>
 
-      <h3 className="mt-4 font-display text-xl font-semibold leading-snug">{copy.title}</h3>
-      <p className="mt-2 flex-1 leading-relaxed text-ink-soft">{copy.summary}</p>
+      <h3 className="mt-4 font-display text-xl font-semibold leading-snug">{brief.title}</h3>
+      <p className="mt-2 flex-1 leading-relaxed text-ink-soft">{brief.summary}</p>
 
       <p className="label-mono mt-4 text-xs text-brand">{jobs.formats[brief.format]}</p>
 
