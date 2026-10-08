@@ -82,7 +82,14 @@ async function AccountContent({ lang }) {
         {isBrand ? (
           <Button href={routes.creators}>{account.findCreators}</Button>
         ) : (
-          <Button href={routes.jobs}>{account.browseJobs}</Button>
+          <>
+            <Button href={routes.packages} variant={hasPackages ? "secondary" : "primary"}>
+              {account.managePackages}
+            </Button>
+            <Button href={routes.jobs} variant="secondary">
+              {account.browseJobs}
+            </Button>
+          </>
         )}
         {creator && hasPackages ? (
           <Button href={routes.creatorProfile(creator.slug)} variant="secondary" arrow={false}>

@@ -2,6 +2,14 @@
 
 Approved changes, newest first. Format: date, what, files, why.
 
+## 2026-10-09 (creator package management)
+- Creators can now add, edit and delete their own packages at `/{lang}/account/packages` (button "Manage my packages" on the account page). The first package makes the profile appear in the creators list and on the home page; the public profile shows changes right away.
+- Rules (checked on the server in `app/[lang]/account/packages/actions.js`): name up to 40 characters, description up to 160, price a whole number from 1 to 1,000,000 (stored as number + currency code, TRY), delivery 1 to 30 days, at most 6 packages per creator. A creator can only change their own packages. A package that already has orders cannot be deleted (orders point to it); delete asks for a second click to confirm.
+- Package name and description are stored in one language, as the creator wrote them. Error and button texts are in `locales/` (`packages`, English and Turkish). Limits live in `lib/options.js` (`PACKAGE_LIMITS`).
+- No schema change, no new package. After a change the cached creator queries are refreshed with `updateTag("creators")` and the page with `refresh()`.
+- Verified against a real production build: invalid input rejected (name, price, days), add, edit, delete, limit of 6, another creator cannot edit or delete my package, a package with orders is kept, brand accounts and logged-out visitors are redirected, Turkish page renders.
+  - Files: `app/[lang]/account/packages/actions.js`, `app/[lang]/account/packages/page.js`, `components/PackagesManager.js`, `app/[lang]/account/page.js`, `lib/options.js`, `lib/routes.js`, `locales/en.js`, `locales/tr.js`, `CHANGELOG.md`, `CLAUDE.md`
+
 ## 2026-10-08 (real login and sign-up)
 - Sign-up and log-in now work for real. Sign-up asks for the extra details each side needs: brands give a brand name and industry; creators give a handle, niche and city (a public profile is created, hidden from the creators list until packages exist). Passwords are hashed with Node's built-in `scrypt` (`lib/password.mjs`), so no new package was needed. Login is a signed, HTTP-only cookie valid for 7 days (`lib/session.js`, optional `SESSION_SECRET` in `.env`).
 - The system knows the account type: after log-in or sign-up everyone lands on `/{lang}/account`, which shows brand or creator details, a log-out button and the next step. The header shows "My account" when logged in; the mobile menu too.
