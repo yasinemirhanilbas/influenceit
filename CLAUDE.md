@@ -38,7 +38,7 @@ App starts without errors and the changed flow works end to end.
 - This Next.js version differs from older ones: read `node_modules/next/dist/docs/` before using framework APIs (see AGENTS.md).
 
 ## Current status
-Phase 1 started: app scaffold and a full home page (header, hero, brand strip, how it works, numbers, creators with filters, comparison, testimonials, FAQ, CTA; static data) done. Not yet: Prisma schema, seed, shared layout/header, git init. Run `npm install` on your own machine, then `npm run dev`.
+Phase 1 started: app scaffold and a full home page (header, hero, brand strip, how it works, numbers, creators with filters, comparison, testimonials, FAQ, CTA; static data) done. Not yet: Prisma schema, seed, shared layout/header. Git is set up: private repo github.com/yasinemirhanilbas/influenceit, initial scaffold merged to main via PR #1 (2026-10-08); all further work goes through feature/* branches and pull requests. Run `npm install` on your own machine, then `npm run dev`.
 
 ## Backlog / ideas
 (not approved yet)
