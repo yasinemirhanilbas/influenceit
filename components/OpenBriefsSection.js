@@ -2,10 +2,10 @@ import Link from "next/link";
 import BriefCard from "./BriefCard";
 import SectionHeading from "./SectionHeading";
 import { getMessages } from "@/locales";
-import { briefs } from "@/data/briefs";
+import { getOpenJobs } from "@/lib/queries";
 import { getRoutes } from "@/lib/routes";
 
-function Cards({ lang, duplicate = false }) {
+function Cards({ briefs, lang, duplicate = false }) {
   return briefs.map((brief) => (
     <li
       key={`${duplicate ? "copy-" : ""}${brief.id}`}
@@ -17,7 +17,8 @@ function Cards({ lang, duplicate = false }) {
   ));
 }
 
-export default function OpenBriefsSection({ lang }) {
+export default async function OpenBriefsSection({ lang }) {
+  const briefs = await getOpenJobs(lang);
   const { jobs } = getMessages(lang);
   const routes = getRoutes(lang);
 
@@ -50,8 +51,8 @@ export default function OpenBriefsSection({ lang }) {
           className="marquee-track marquee-track-reverse"
           style={{ animationDuration: "70s" }}
         >
-          <Cards lang={lang} />
-          <Cards lang={lang} duplicate />
+          <Cards briefs={briefs} lang={lang} />
+          <Cards briefs={briefs} lang={lang} duplicate />
         </ul>
       </div>
       <p className="mx-auto max-w-6xl px-5 pb-16 text-sm text-ink-soft">{jobs.note}</p>

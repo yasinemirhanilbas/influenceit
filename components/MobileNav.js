@@ -5,14 +5,16 @@ import { MenuIcon, XIcon } from "./icons";
 import Button from "./Button";
 import { getMessages } from "@/locales";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { getNavLinks, getRoutes } from "@/lib/routes";
 
-export default function MobileNav({ lang }) {
+export default function MobileNav({ lang, signedIn = false }) {
   const messages = getMessages(lang);
   const routes = getRoutes(lang);
   const { header, common } = messages;
   const navLinks = getNavLinks(lang);
   const [open, setOpen] = useState(false);
+  const pathname = usePathname();
 
   return (
     <div className="lg:hidden">
@@ -39,7 +41,8 @@ export default function MobileNav({ lang }) {
                 <Link
                   href={link.href}
                   onClick={() => setOpen(false)}
-                  className="label-mono block rounded-xl px-4 py-3 text-sm hover:bg-brand-soft focus-visible:outline-2 focus-visible:outline-brand-light"
+                  aria-current={pathname === link.href ? "page" : undefined}
+                  className={`label-mono block rounded-xl px-4 py-3 text-sm hover:bg-brand-soft focus-visible:outline-2 focus-visible:outline-brand-light ${pathname === link.href ? "bg-brand-soft text-brand" : ""}`}
                 >
                   {link.label}
                 </Link>
@@ -47,15 +50,23 @@ export default function MobileNav({ lang }) {
             ))}
           </ul>
           <div className="mt-2 border-t border-dashed border-line p-2 pt-4">
-            <Button href={routes.signUpBrand} className="w-full">
-              {common.startAsBrand}
-            </Button>
-            <Button href={routes.signUpCreator} variant="secondary" className="mt-2 w-full">
-              {common.joinAsCreator}
-            </Button>
-            <Button href={routes.login} variant="secondary" arrow={false} className="mt-2 w-full">
-              {header.logIn}
-            </Button>
+            {signedIn ? (
+              <Button href={routes.account} className="w-full">
+                {header.account}
+              </Button>
+            ) : (
+              <>
+                <Button href={routes.signUpBrand} className="w-full">
+                  {common.startAsBrand}
+                </Button>
+                <Button href={routes.signUpCreator} variant="secondary" className="mt-2 w-full">
+                  {common.joinAsCreator}
+                </Button>
+                <Button href={routes.login} variant="secondary" arrow={false} className="mt-2 w-full">
+                  {header.logIn}
+                </Button>
+              </>
+            )}
           </div>
         </nav>
       ) : null}

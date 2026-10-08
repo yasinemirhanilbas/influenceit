@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import CreatorDirectory from "@/components/CreatorDirectory";
 import PageHeader from "@/components/PageHeader";
 import SignUpCta from "@/components/SignUpCta";
-import { creators } from "@/data/creators";
+import { getCreators } from "@/lib/queries";
 import { getMessages, isLocale } from "@/locales";
 
 export async function generateMetadata({ params }) {
@@ -16,6 +16,7 @@ export default async function CreatorsPage({ params }) {
   if (!isLocale(lang)) notFound();
   const { pages } = getMessages(lang);
   const copy = pages.creators;
+  const creators = await getCreators();
 
   return (
     <>

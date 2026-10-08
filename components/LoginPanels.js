@@ -1,8 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useActionState } from "react";
 import { getMessages } from "@/locales";
+import { logInAction } from "@/app/[lang]/auth/actions";
 import { getRoutes } from "@/lib/routes";
 
 const inputClass =
@@ -13,17 +14,12 @@ const inputClass =
 export default function LoginPanels({ lang }) {
   const { login } = getMessages(lang);
   const routes = getRoutes(lang);
-  const [sent, setSent] = useState(false);
-
-  // Prototype: nothing is sent or stored.
-  function handleSubmit(event) {
-    event.preventDefault();
-    setSent(true);
-  }
+  const [state, formAction, pending] = useActionState(logInAction, null);
 
   return (
     <div className="mx-auto max-w-md rounded-card border border-line bg-card p-6 shadow-card sm:p-8">
-      <form onSubmit={handleSubmit} className="space-y-5">
+      <form action={formAction} className="space-y-5">
+        <input type="hidden" name="lang" value={lang} />
         <label className="block">
           <span className="text-sm font-semibold">{login.email}</span>
           <input name="email" type="email" required autoComplete="email" className={inputClass} />
@@ -34,16 +30,19 @@ export default function LoginPanels({ lang }) {
         </label>
         <button
           type="submit"
-          className="bg-brand-gradient min-h-12 w-full rounded-full px-7 font-semibold text-white shadow-glow transition hover:brightness-110 active:translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-light"
+          disabled={pending}
+          className="bg-brand-gradient disabled:opacity-60 min-h-12 w-full rounded-full px-7 font-semibold text-white shadow-glow transition hover:brightness-110 active:translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-light"
         >
-          {login.submit}
+          {pending ? login.submitting : login.submit}
         </button>
-        {sent ? (
-          <p role="status" className="text-sm text-ink-soft">
-            {login.demoMessage}
+        {state?.error ? (
+          <p role="alert" className="text-sm text-brand-dark">
+            {login.errors[state.error] ?? login.errors.invalid}
           </p>
         ) : null}
       </form>
+
+      <p className="mt-6 rounded-xl bg-soft p-4 text-sm text-ink-soft">{login.demoAccounts}</p>
 
       <p className="mt-6 text-center text-sm text-ink-soft">
         {login.noAccount}{" "}

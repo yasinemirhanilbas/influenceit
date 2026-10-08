@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import JobBoard from "@/components/JobBoard";
 import PageHeader from "@/components/PageHeader";
 import SignUpCta from "@/components/SignUpCta";
-import { briefs } from "@/data/briefs";
+import { getOpenJobs } from "@/lib/queries";
 import { getMessages, isLocale } from "@/locales";
 
 export async function generateMetadata({ params }) {
@@ -16,6 +16,7 @@ export default async function JobsPage({ params }) {
   if (!isLocale(lang)) notFound();
   const { pages, jobs } = getMessages(lang);
   const copy = pages.jobs;
+  const briefs = await getOpenJobs(lang);
 
   return (
     <>

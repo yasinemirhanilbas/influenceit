@@ -1,11 +1,14 @@
+import Link from "next/link";
 import Avatar from "./Avatar";
 import { StarIcon, VerifiedIcon } from "./icons";
 import { getMessages, interpolate } from "@/locales";
 import { formatCompactNumber, formatCurrency, formatRating } from "@/lib/format";
 import { getTier } from "@/lib/creators";
 import { getIntlLocale } from "@/locales";
+import { getRoutes } from "@/lib/routes";
 
-export default function CreatorCard({ creator, lang }) {
+// `duplicate` cards (marquee copies) keep the link out of the tab order.
+export default function CreatorCard({ creator, lang, duplicate = false }) {
   const messages = getMessages(lang);
   const { common, featured } = messages;
   const intl = getIntlLocale(lang);
@@ -13,20 +16,29 @@ export default function CreatorCard({ creator, lang }) {
   const rating = formatRating(creator.rating, intl);
 
   return (
-    <article className="flex h-full flex-col rounded-card border border-line bg-card p-6 shadow-card transition-transform duration-[420ms] ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-1.5">
+    <article className="relative flex h-full flex-col rounded-card border border-line bg-card p-6 shadow-card transition-transform duration-[420ms] ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-1.5">
       <div className="flex items-start gap-4">
         <Avatar name={creator.name} avatar={creator.avatar} />
         <div className="min-w-0">
           <h3 className="flex items-center gap-1.5 font-display text-lg font-semibold">
-            <span className="truncate">{creator.name}</span>
+            <Link
+              href={getRoutes(lang).creatorProfile(creator.id)}
+              tabIndex={duplicate ? -1 : undefined}
+              className="truncate after:absolute after:inset-0 after:rounded-card focus-visible:outline-none focus-visible:after:outline-2 focus-visible:after:outline-offset-2 focus-visible:after:outline-brand-light"
+            >
+              {creator.name}
+            </Link>
             {creator.verified ? (
-              <span className="inline-flex shrink-0 text-brand" title={common.verifiedProfile}>
+              <span className="relative inline-flex shrink-0 text-brand" title={common.verifiedProfile}>
                 <VerifiedIcon className="h-5 w-5" />
                 <span className="sr-only">{common.verifiedProfile}</span>
               </span>
             ) : null}
           </h3>
           <p className="text-sm text-ink-soft">{creator.handle}</p>
+          <p className="text-sm text-ink-soft">
+            {interpolate(common.followers, { count: formatCompactNumber(creator.followers, intl) })}
+          </p>
         </div>
       </div>
 
@@ -36,9 +48,6 @@ export default function CreatorCard({ creator, lang }) {
         </span>
         <span className="rounded-full border border-line bg-card px-3 py-1 font-medium text-ink-soft">
           {featured.tiers[getTier(creator.followers)]}
-        </span>
-        <span className="text-ink-soft">
-          {interpolate(common.followers, { count: formatCompactNumber(creator.followers, intl) })}
         </span>
       </div>
 

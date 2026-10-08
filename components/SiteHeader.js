@@ -1,7 +1,10 @@
+import { Suspense } from "react";
 import Link from "next/link";
-import Button from "./Button";
+import HeaderAccount, { GuestButtons } from "./HeaderAccount";
 import LanguageSwitcher from "./LanguageSwitcher";
 import MobileNav from "./MobileNav";
+import NavLinks from "./NavLinks";
+import { LanguageSwitcherFallback, NavLinksFallback } from "./NavFallbacks";
 import { getMessages } from "@/locales";
 import { getNavLinks, getRoutes } from "@/lib/routes";
 
@@ -10,6 +13,7 @@ export default function SiteHeader({ lang }) {
   const routes = getRoutes(lang);
   const { header, common } = messages;
   const navLinks = getNavLinks(lang);
+  const mainLinks = navLinks.filter((link) => link.route !== "stories");
 
   return (
     <>
@@ -23,7 +27,9 @@ export default function SiteHeader({ lang }) {
             >
               {header.supportEmail}
             </a>
-            <LanguageSwitcher lang={lang} />
+            <Suspense fallback={<LanguageSwitcherFallback lang={lang} />}>
+              <LanguageSwitcher lang={lang} />
+            </Suspense>
           </div>
         </div>
       </div>
@@ -51,34 +57,22 @@ export default function SiteHeader({ lang }) {
           </Link>
 
           <nav aria-label={header.mainNavLabel} className="hidden lg:block">
-            <ul className="label-mono label-tight flex items-center gap-5 text-xs xl:gap-6">
-              {navLinks
-                .filter((link) => link.route !== "stories")
-                .map((link) => (
-                <li key={link.href}>
-                  <Link
-                    href={link.href}
-                    className="whitespace-nowrap py-2 text-ink-soft transition-colors duration-[420ms] hover:text-brand focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-light"
-                  >
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
+            <Suspense fallback={<NavLinksFallback links={mainLinks} />}>
+              <NavLinks links={mainLinks} />
+            </Suspense>
           </nav>
 
           <div className="flex items-center gap-2">
-            <span className="hidden lg:inline-flex">
-              <Button href={routes.login} size="sm" arrow={false} variant="secondary">
-                {header.logIn}
-              </Button>
-            </span>
-            <span className="hidden sm:inline-flex lg:hidden xl:inline-flex">
-              <Button href={routes.signUp} size="sm" arrow={false}>
-                {header.signUp}
-              </Button>
-            </span>
-            <MobileNav lang={lang} />
+            <Suspense
+              fallback={
+                <>
+                  <GuestButtons lang={lang} />
+                  <MobileNav lang={lang} signedIn={false} />
+                </>
+              }
+            >
+              <HeaderAccount lang={lang} />
+            </Suspense>
           </div>
         </div>
       </header>
