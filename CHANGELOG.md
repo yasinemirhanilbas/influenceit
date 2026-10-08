@@ -2,6 +2,14 @@
 
 Approved changes, newest first. Format: date, what, files, why.
 
+## 2026-10-08 (database, Phase 1)
+- Added the Prisma + SQLite database layer: schema with `User`, `CreatorProfile`, `BrandProfile`, `Package`, `Order`; a fixed seed (24 creators, 6 brands, 72 packages, 8 orders in all statuses); `npm run reset` wipes and refills the database.
+- `status` and `role` are plain strings; allowed values are in `lib/orderStatus.js` (state machine comes in Phase 3).
+- Order stores a copy of the package price (`priceAmount` + `priceCurrency`) so later price changes do not alter old orders.
+  - Files: `prisma/schema.prisma`, `prisma/seed.mjs`, `prisma.config.mjs`, `lib/db.js`, `lib/orderStatus.js`, `.env.example`, `package.json`, `package-lock.json`
+  - Packages: `@prisma/client`, `@prisma/adapter-better-sqlite3`, `prisma` (all pinned to 7.10.0, the stable line; `latest` was a release candidate).
+  - Why: Phase 1 data layer. Home page still uses static `data/`; the first 9 seed creators match it (same ids, followers, starting prices).
+
 ## 2026-10-08 (richer home page)
 - Added a sticky header with a support bar and a mobile menu, a scrolling strip of fictional brand names, a numbers section, a comparison table and an FAQ.
 - Hero receipt now animates through the order steps (order placed, held in escrow, delivered, released) and has floating chips. Motion respects `prefers-reduced-motion`.
