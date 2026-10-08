@@ -84,6 +84,9 @@ async function AccountContent({ lang }) {
         ) : (
           <Button href={routes.jobs}>{account.browseJobs}</Button>
         )}
+        <Button href={routes.orders} variant="secondary" arrow={false}>
+          {account.myOrders}
+        </Button>
         {creator && hasPackages ? (
           <Button href={routes.creatorProfile(creator.slug)} variant="secondary" arrow={false}>
             {account.viewProfile}

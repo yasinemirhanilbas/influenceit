@@ -113,7 +113,7 @@ export default async function CreatorProfilePage({ params }) {
                   <p className="mt-1 text-sm text-ink-soft">
                     {interpolate(profile.packageDelivery, { days: pkg.deliveryDays })}
                   </p>
-                  <Button href={routes.signUpBrand} size="sm" className="mt-5 w-full">
+                  <Button href={routes.newOrder(pkg.id)} size="sm" className="mt-5 w-full">
                     {profile.order}
                   </Button>
                 </article>
