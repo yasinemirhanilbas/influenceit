@@ -433,6 +433,7 @@ const en = {
     logIn: "Log in",
     submit: "Create my account",
     note: "Prototype: all accounts and data stay on this computer.",
+    defaultBio: "New on InfluenceIt.",
   },
 
   login: {

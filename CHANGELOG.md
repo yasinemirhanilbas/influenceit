@@ -2,6 +2,11 @@
 
 Approved changes, newest first. Format: date, what, files, why.
 
+## 2026-10-09 (default creator bio in locales)
+- The starter bio of a new creator ("New on InfluenceIt.") is no longer hardcoded in `signUpAction`; it comes from `signup.defaultBio` in `locales/` and follows the language of the sign-up page (English or Turkish). It is stored in the database as written at sign-up.
+  - Files: `app/[lang]/auth/actions.js`, `locales/en.js`, `locales/tr.js`
+  - Why: project rule "no hardcoded UI strings".
+
 ## 2026-10-08 (real login and sign-up)
 - Sign-up and log-in now work for real. Sign-up asks for the extra details each side needs: brands give a brand name and industry; creators give a handle, niche and city (a public profile is created, hidden from the creators list until packages exist). Passwords are hashed with Node's built-in `scrypt` (`lib/password.mjs`), so no new package was needed. Login is a signed, HTTP-only cookie valid for 7 days (`lib/session.js`, optional `SESSION_SECRET` in `.env`).
 - The system knows the account type: after log-in or sign-up everyone lands on `/{lang}/account`, which shows brand or creator details, a log-out button and the next step. The header shows "My account" when logged in; the mobile menu too.

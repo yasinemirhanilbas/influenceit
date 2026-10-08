@@ -433,6 +433,7 @@ const tr = {
     logIn: "Giriş yap",
     submit: "Hesabımı oluştur",
     note: "Prototip: tüm hesaplar ve veriler bu bilgisayarda kalır.",
+    defaultBio: "InfluenceIt'te yeni.",
   },
 
   login: {

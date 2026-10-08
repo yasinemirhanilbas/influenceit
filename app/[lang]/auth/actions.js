@@ -7,7 +7,7 @@ import { CITIES, NICHES } from "@/lib/options";
 import { hashPassword, verifyPassword } from "@/lib/password.mjs";
 import { getRoutes } from "@/lib/routes";
 import { endSession, startSession } from "@/lib/session";
-import { isLocale } from "@/locales";
+import { getMessages, isLocale } from "@/locales";
 
 // Server actions for sign-up, log-in and log-out.
 // They return { error: "<key>" } on failure; the forms translate the key with locales (signup.errors / login.errors).
@@ -101,7 +101,7 @@ export async function signUpAction(_previous, formData) {
             handle: `@${handleBase}`,
             niche,
             city,
-            bio: "New on InfluenceIt.",
+            bio: getMessages(lang).signup.defaultBio,
             followers: 0,
             rating: 0,
             completedOrders: 0,
