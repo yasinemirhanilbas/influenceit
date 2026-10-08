@@ -1,0 +1,224 @@
+@import "tailwindcss";
+
+/* Paper Trust design tokens */
+@theme {
+  --color-paper: #fbf7f0;
+  --color-card: #ffffff;
+  --color-ink: #22111a;
+  --color-ink-soft: #62505a;
+  --color-brand: #7a1f3d;
+  --color-brand-dark: #5a1229;
+  --color-brand-soft: #f8e1e8;
+  --color-accent: #f2542d;
+  --color-accent-hover: #f77a57;
+  --color-stamp: #b83a1a;
+  --color-line: #eadcd8;
+  --color-brand-light: #b0365b;
+
+  --radius-card: 20px;
+  --shadow-card: 0 10px 30px rgba(90, 18, 41, 0.08);
+  --shadow-glow: 0 8px 20px rgba(122, 31, 61, 0.28);
+}
+
+@theme inline {
+  --font-sans: var(--font-dm-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-fraunces), ui-serif, Georgia, serif;
+}
+
+:root {
+  color-scheme: light;
+}
+
+body {
+  background-color: var(--color-paper);
+  /* Very light paper grain (inline SVG noise, a few hundred bytes) */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .35 0 0 0 0 .2 0 0 0 0 .2 0 0 0 .05 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+}
+
+/* Burgundy gradient helpers */
+.bg-brand-gradient {
+  background-image: linear-gradient(90deg, #7a1f3d, #b0365b);
+}
+
+.bg-brand-gradient-deep {
+  background-image: linear-gradient(135deg, #5a1229, #8e2748);
+}
+
+.text-gradient {
+  background-image: linear-gradient(90deg, #7a1f3d, #b0365b);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+
+@media (forced-colors: active) {
+  .text-gradient {
+    background: none;
+    color: CanvasText;
+  }
+}
+
+/* Soft burgundy and tomato light spots behind the hero */
+.hero-glow {
+  background-image:
+    radial-gradient(60% 60% at 10% 6%, rgba(122, 31, 61, 0.14), transparent 60%),
+    radial-gradient(50% 50% at 92% 32%, rgba(242, 84, 45, 0.1), transparent 60%);
+}
+
+/* "Held in escrow" stamp: static tilt, animated entrance */
+.stamp {
+  transform: rotate(-6deg);
+}
+
+@keyframes stamp-in {
+  0% {
+    opacity: 0;
+    transform: rotate(-14deg) scale(1.7);
+  }
+  60% {
+    opacity: 1;
+    transform: rotate(-5deg) scale(0.94);
+  }
+  100% {
+    opacity: 1;
+    transform: rotate(-6deg) scale(1);
+  }
+}
+
+.stamp-animate {
+  animation: stamp-in 600ms 500ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stamp-animate {
+    animation: none;
+  }
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+
+/* Stamp that pops in each time its text changes */
+.stamp-pop {
+  animation: stamp-in 500ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+/* Scalloped paper edge on top of a white section */
+.scallop-top {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -10px;
+  height: 10px;
+  background:
+    radial-gradient(circle at 10px 10px, var(--color-card) 9.5px, transparent 10px)
+    0 0 / 20px 10px repeat-x;
+}
+
+/* Logo strip that scrolls sideways */
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marquee 40s linear infinite;
+}
+
+.marquee:hover .marquee-track {
+  animation-play-state: paused;
+}
+
+/* Floating chips around the hero receipt */
+@keyframes float-y {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+.float-chip {
+  animation: float-y 5s ease-in-out infinite;
+}
+
+.float-chip-delay {
+  animation-delay: -2.5s;
+}
+
+/* Sections fade and rise as they enter the viewport.
+   Browsers without scroll-driven animations simply show them. */
+@keyframes reveal-in {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@supports (animation-timeline: view()) {
+  .reveal {
+    animation: reveal-in linear both;
+    animation-timeline: view();
+    animation-range: entry 0px entry 280px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track {
+    animation: none;
+    flex-wrap: wrap;
+    width: auto;
+    justify-content: center;
+  }
+  .marquee-track [data-duplicate] {
+    display: none;
+  }
+  .float-chip,
+  .stamp-pop,
+  .reveal {
+    animation: none;
+  }
+}
+
+/* Cards fade in when the creator filter changes */
+@keyframes card-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.card-in {
+  animation: card-in 320ms ease-out both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card-in {
+    animation: none;
+  }
+}

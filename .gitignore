@@ -1,0 +1,27 @@
+# dependencies
+node_modules/
+
+# environment
+.env
+.env.*
+!.env.example
+
+# database
+*.db
+*.db-journal
+
+# Next.js
+.next/
+out/
+
+# misc
+.DS_Store
+npm-debug.log*
+
+# extra
+*.pem
+.vercel
+*.tsbuildinfo
+/coverage
+
+.preview/
