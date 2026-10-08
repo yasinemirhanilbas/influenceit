@@ -37,8 +37,10 @@ App starts without errors and the changed flow works end to end.
 - Animations are CSS-only (marquee, scroll-in `.reveal`, stamp, floating chips) and disabled under `prefers-reduced-motion`. The only client components are `ReceiptCard`, `CreatorGrid` and `MobileNav`.
 - This Next.js version differs from older ones: read `node_modules/next/dist/docs/` before using framework APIs (see AGENTS.md).
 
+- Database (2026-10-08): Prisma 7.10.0 + SQLite via `@prisma/adapter-better-sqlite3`. Schema in `prisma/schema.prisma` (generator `prisma-client-js`, client from `@prisma/client`). One shared client: `import { db } from "@/lib/db"` (check `jsconfig.json` for the alias, otherwise use a relative path). DB file `dev.db` is created in the project root and is git-ignored; everyone builds it with `npm run reset`. Order `status` and user `role` are strings, values in `lib/orderStatus.js`. Order copies the package price at order time. Seed is fixed and fictional (`prisma/seed.mjs`); creator `slug` equals the old static `id`.
+
 ## Current status
-Phase 1 started: app scaffold and a full home page (header, hero, brand strip, how it works, numbers, creators with filters, comparison, testimonials, FAQ, CTA; static data) done. Not yet: Prisma schema, seed, shared layout/header. Git is set up: private repo github.com/yasinemirhanilbas/influenceit, initial scaffold merged to main via PR #1 (2026-10-08); all further work goes through feature/* branches and pull requests. Run `npm install` on your own machine, then `npm run dev`.
+Phase 1 started: app scaffold and a full home page (header, hero, brand strip, how it works, numbers, creators with filters, comparison, testimonials, FAQ, CTA; static data) done. Prisma schema, seed and `npm run reset` are done (branch feature/database). Not yet: pages reading from the database, shared layout/header. Git is set up: private repo github.com/yasinemirhanilbas/influenceit, initial scaffold merged to main via PR #1 (2026-10-08); all further work goes through feature/* branches and pull requests. After pulling: run `npm install`, then `npm run reset` (creates and fills `dev.db`), then `npm run dev`.
 
 ## Backlog / ideas
 (not approved yet)

@@ -1,0 +1,99 @@
+// InfluenceIt data model (SQLite).
+// Prices are stored as a whole number + a currency code (never as formatted text).
+// Role and order status are plain strings; their allowed values live in lib/orderStatus.js.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  role      String // "BRAND" or "CREATOR"
+  name      String
+  createdAt DateTime @default(now())
+
+  creatorProfile CreatorProfile?
+  brandProfile   BrandProfile?
+}
+
+model CreatorProfile {
+  id              Int     @id @default(autoincrement())
+  userId          Int     @unique
+  slug            String  @unique
+  handle          String
+  niche           String
+  city            String
+  bio             String
+  followers       Int
+  rating          Float
+  completedOrders Int
+  deliveryDays    Int
+  verified        Boolean @default(false)
+  avatarShape     String // "circle" | "arch" | "square"
+  avatarBg        String
+  avatarFg        String
+
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  packages Package[]
+  orders   Order[]
+
+  @@index([niche])
+  @@index([city])
+}
+
+model BrandProfile {
+  id             Int    @id @default(autoincrement())
+  userId         Int    @unique
+  companyName    String
+  industry       String
+  budgetAmount   Int?
+  budgetCurrency String @default("TRY")
+
+  user   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  orders Order[]
+}
+
+model Package {
+  id            Int    @id @default(autoincrement())
+  creatorId     Int
+  name          String
+  description   String
+  priceAmount   Int
+  priceCurrency String @default("TRY")
+  deliveryDays  Int
+
+  creator CreatorProfile @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  orders  Order[]
+
+  @@index([creatorId])
+}
+
+model Order {
+  id            Int       @id @default(autoincrement())
+  brandId       Int
+  creatorId     Int
+  packageId     Int
+  brief         String
+  status        String    @default("PENDING") // see lib/orderStatus.js
+  // Price is copied from the package at order time so later price edits do not change old orders.
+  priceAmount   Int
+  priceCurrency String    @default("TRY")
+  deliveryLink  String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  paidAt        DateTime?
+  deliveredAt   DateTime?
+  completedAt   DateTime?
+
+  brand   BrandProfile   @relation(fields: [brandId], references: [id])
+  creator CreatorProfile @relation(fields: [creatorId], references: [id])
+  package Package        @relation(fields: [packageId], references: [id])
+
+  @@index([brandId])
+  @@index([creatorId])
+  @@index([status])
+}
