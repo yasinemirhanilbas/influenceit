@@ -1,23 +1,24 @@
 import SectionHeading from "./SectionHeading";
-import { messages } from "@/locales";
+import { getMessages } from "@/locales";
 import { testimonials } from "@/data/testimonials";
+import { getIntlLocale } from "@/locales";
 import { formatCompactNumber } from "@/lib/format";
 
 function getInitial(name) {
   return name[0].toUpperCase();
 }
 
-export default function TestimonialsSection() {
+export default function TestimonialsSection({ lang }) {
+  const messages = getMessages(lang);
   const { testimonials: copy } = messages;
 
   return (
     <section
       id="stories"
       aria-labelledby="testimonials-heading"
-      className="relative scroll-mt-24 border-b border-line bg-card"
+      className="relative scroll-mt-24 border-b border-line bg-soft"
     >
-      <div aria-hidden="true" className="scallop-top" />
-      <div className="reveal mx-auto max-w-6xl px-5 py-16 sm:py-20 lg:py-24">
+      <div className="reveal mx-auto max-w-6xl px-5 py-20 sm:py-24 lg:py-32">
         <SectionHeading
           id="testimonials-heading"
           eyebrow={copy.eyebrow}
@@ -27,10 +28,10 @@ export default function TestimonialsSection() {
         <ul className="mt-10 grid gap-6 lg:grid-cols-3">
           {testimonials.map((item) => (
             <li key={item.id}>
-              <figure className="flex h-full flex-col rounded-card border border-line bg-paper p-6 shadow-card">
+              <figure className="flex h-full flex-col rounded-card border border-line bg-card p-6 shadow-card">
                 <p className="font-display leading-none">
                   <span className="text-gradient text-6xl font-semibold">
-                    {formatCompactNumber(item.metric.value)}
+                    {formatCompactNumber(item.metric.value, getIntlLocale(lang))}
                   </span>
                 </p>
                 <p className="mt-2 text-sm font-semibold text-ink-soft">
@@ -38,7 +39,7 @@ export default function TestimonialsSection() {
                 </p>
 
                 <blockquote className="mt-5 flex-1 font-display text-lg leading-snug">
-                  &ldquo;{item.quote}&rdquo;
+                  &ldquo;{copy.items[item.id].quote}&rdquo;
                 </blockquote>
 
                 <figcaption className="mt-5 flex items-center gap-3 border-t border-dashed border-line pt-4">
@@ -51,7 +52,7 @@ export default function TestimonialsSection() {
                   <span>
                     <span className="block font-semibold">{item.brand}</span>
                     <span className="block text-sm text-ink-soft">
-                      {item.person}, {item.role}
+                      {item.person}, {copy.items[item.id].role}
                     </span>
                   </span>
                 </figcaption>

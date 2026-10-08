@@ -2,6 +2,57 @@
 
 Approved changes, newest first. Format: date, what, files, why.
 
+## 2026-10-08 (database, Phase 1)
+- Added the Prisma + SQLite database layer: schema with `User`, `CreatorProfile`, `BrandProfile`, `Package`, `Order`; a fixed seed (24 creators, 6 brands, 72 packages, 8 orders in all statuses); `npm run reset` wipes and refills the database.
+- `status` and `role` are plain strings; allowed values are in `lib/orderStatus.js` (state machine comes in Phase 3).
+- Order stores a copy of the package price (`priceAmount` + `priceCurrency`) so later price changes do not alter old orders.
+  - Files: `prisma/schema.prisma`, `prisma/seed.mjs`, `prisma.config.mjs`, `lib/db.js`, `lib/orderStatus.js`, `.env.example`, `package.json`, `package-lock.json`
+  - Packages: `@prisma/client`, `@prisma/adapter-better-sqlite3`, `prisma` (all pinned to 7.10.0, the stable line; `latest` was a release candidate).
+  - Why: Phase 1 data layer. Home page still uses static `data/`; the first 9 seed creators match it (same ids, followers, starting prices).
+
+## 2026-10-08 (log in)
+- Sign-up page redesigned after the user's reference: two large account-type cards (Brand / Creator), first and last name, email, password (min 8), terms checkbox, info box that changes per account type, "Already have an account? Log in" link. Still a prototype. Header: "Brand stories" removed from the top navigation (still in the footer) so the Turkish menu fits on one line; the brand button hides between 1024 and 1279px where "Log in" is shown. Files: `components/SignupForm.js`, `components/SiteHeader.js`, `lib/routes.js`, `locales/`.
+- Header button text changed from "Start as a brand" to "Sign up" / "Kayıt ol" (links to `/{lang}/signup`). Files: `components/SiteHeader.js`, `lib/routes.js`, `locales/`.
+- Login page is now a single email + password form (no brand/creator panels): the account itself decides whether it is a brand or a creator account. Files: `components/LoginPanels.js`, `locales/`.
+- Added a "Log in" button in the header (desktop) and mobile menu, and a `/{lang}/login` page with two separate panels: brand account and creator account. Prototype only: no accounts exist, nothing is sent or stored. Header nav spacing tightened; label tracking `.label-tight` added.
+  - Files: `app/[lang]/login/page.js`, `components/LoginPanels.js`, `components/SiteHeader.js`, `components/MobileNav.js`, `lib/routes.js`, `app/globals.css`, `locales/`
+  - Why: user request. No new packages.
+
+## 2026-10-08 (multi-page site, two-sided content)
+- The site now has real pages per language: `/{lang}` (short overview), `/{lang}/creators` (search + niche filter), `/{lang}/jobs` (open jobs from brands with niche filter), `/{lang}/how-it-works` (steps, numbers, comparison table, FAQ) and `/{lang}/signup` (brand or creator form; prototype, nothing is stored; `?role=creator` preselects the side).
+- Header, footer and `<main>` moved into `app/[lang]/layout.js` so every page shares them. Navigation uses real routes (`getNavLinks` in `lib/routes.js`). The language switcher keeps the current page.
+- Creators can reach brands: new "Open jobs" marquee on the home page, a job board page, a "For creators" tab in How it works (4 creator steps), creator rows in the comparison table, two creator FAQ items, an "open jobs" statistic and a hero link to open jobs.
+- Fictional job data in `data/briefs.js`; all text in `locales/` (EN and TR, `jobs`, `pages`, `signup`, extra `howItWorks`, `hero`, `faq`, `comparison`, `stats` keys).
+  - Files: `app/[lang]/` (layout, page, creators, jobs, how-it-works, signup), `components/` (BriefCard, OpenBriefsSection, JobBoard, CreatorDirectory, PageHeader, HowItWorksTabs, SignupForm; updated HowItWorksSection, SiteHeader, MobileNav, SiteFooter, HeroSection, LanguageSwitcher), `lib/routes.js`, `data/briefs.js`, `data/stats.js`, `locales/`, `app/globals.css`
+  - Why: user request. No new packages.
+
+## 2026-10-08 (dark burgundy theme, reference-style layout)
+- Switched to a dark burgundy theme and a roomier, more visual layout inspired by a reference UGC portfolio site. Content stays a two-sided marketplace.
+- New fonts: Manrope (body) replaces DM Sans; Space Mono for labels and navigation. Hero headline accent is italic. Larger radii and section spacing, slower hover transitions.
+- New "Content formats" section: scrollable row of gradient placeholder tiles (no photos). New footer with navigation, contact and language switcher. Header shows a small subtitle. Removed the scalloped section edges.
+- Closing section (`SignUpCta`) now uses the dark surface with a soft burgundy glow; the brand card is the burgundy gradient accent, the creator card a dark card. Files: `components/SignUpCta.js`, `app/globals.css`.
+- The "Content formats" tiles and the featured creator cards now slide sideways on their own (CSS marquee, pauses on hover, static when reduced motion is on). The creator filter chips still work; the row restarts when the filter changes. Files: `components/GallerySection.js`, `components/CreatorGrid.js`, `components/FeaturedCreators.js`.
+- Turkish text now says "içerik üretici" instead of "creator" (all occurrences, with correct suffixes). File: `locales/tr.js`. English is unchanged.
+- All new text is in `locales/en.js` and `locales/tr.js` (`gallery`, `footer`, `header.tagline`).
+  - Files: `app/globals.css`, `app/[lang]/layout.js`, `app/[lang]/page.js`, `components/` (GallerySection and SiteFooter new; Button, SectionHeading, SiteHeader, MobileNav, LanguageSwitcher, HeroSection, ReceiptCard, CreatorCard, CreatorGrid, HowItWorksSection, TestimonialsSection, SignUpCta and others), `data/gallery.js` (new), `data/creators.js`, `locales/`, `CLAUDE.md`
+  - Why: user request. No new packages.
+
+## 2026-10-08 (English and Turkish)
+- Added a language switcher (EN | TR) in the top bar and a Turkish translation of every UI text. Pages now live at `/en` and `/tr`; `proxy.js` redirects `/` using the saved choice (cookie `NEXT_LOCALE`), then the browser language, then English.
+- Numbers, currency and percentages follow the language through the Intl API (for example `₺2.500` and `%96` in Turkish).
+- Testimonial quotes and roles, niche names and the receipt package name moved from data files into the locale files. Components receive a `lang` prop and read text with `getMessages(lang)`.
+  - Files: `proxy.js`, `locales/` (config.js, index.js, en.js, tr.js), `app/[lang]/layout.js`, `app/[lang]/page.js` (moved from `app/`), `components/LanguageSwitcher.js`, all other `components/`, `lib/routes.js`, `data/testimonials.js`, `data/sampleOrder.js`, `CLAUDE.md`
+  - Why: user request. No new packages.
+- `dynamicParams` is not allowed together with `cacheComponents` in this Next.js version, so unknown languages are rejected with `notFound()`.
+
+## 2026-10-08 (color system redesign)
+- Replaced the cream paper look with a white page and a very light burgundy tint (#FBF1F4) for alternating sections (How it works, Featured creators, Brand stories). Removed the paper grain.
+- One color family: burgundy. Removed the tomato accent (hero light spot, stamp, closing button, focus ring) and the amber/orange/sand avatar tones; avatars and the rating star now use burgundy shades.
+- Closing section is now a vivid burgundy gradient (#6A1633 to #B0365B) with light spots and glass panels; buttons are white and outlined white.
+- Lines changed from warm beige to light pink-gray (#EFE3E8). Focus rings use #B0365B (white on dark sections).
+  - Files: `app/globals.css`, `components/` (Button, SiteHeader, SignUpCta, SectionHeading, HowItWorksSection, FeaturedCreators, TestimonialsSection, CreatorCard, and every component that used the focus ring), `data/creators.js`, `CLAUDE.md`
+  - Why: user found the cream background aged and asked for a burgundy palette as consistent as the reference site's single-color harmony.
+
 ## 2026-10-08 (richer home page)
 - Added a sticky header with a support bar and a mobile menu, a scrolling strip of fictional brand names, a numbers section, a comparison table and an FAQ.
 - Hero receipt now animates through the order steps (order placed, held in escrow, delivered, released) and has floating chips. Motion respects `prefers-reduced-motion`.

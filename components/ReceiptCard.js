@@ -3,8 +3,9 @@
 import { useEffect, useState } from "react";
 import Avatar from "./Avatar";
 import { CheckIcon, VerifiedIcon } from "./icons";
-import { messages, interpolate } from "@/locales";
+import { getMessages, interpolate } from "@/locales";
 import { formatCurrency } from "@/lib/format";
+import { getIntlLocale } from "@/locales";
 import { sampleOrder } from "@/data/sampleOrder";
 
 const TOTAL_STEPS = 4;
@@ -28,10 +29,11 @@ function Notches({ top }) {
   );
 }
 
-export default function ReceiptCard() {
+export default function ReceiptCard({ lang }) {
+  const messages = getMessages(lang);
   const { receipt, common, hero } = messages;
   const { creator, price } = sampleOrder;
-  const total = formatCurrency(price.amount, price.currency);
+  const total = formatCurrency(price.amount, price.currency, getIntlLocale(lang));
   const [completed, setCompleted] = useState(INITIAL_COMPLETED);
 
   // Walk through the order steps in a loop. Skipped for reduced motion.
@@ -66,12 +68,12 @@ export default function ReceiptCard() {
 
   return (
     <div className="relative mx-auto mb-6 w-full max-w-sm pt-4 lg:max-w-md">
-      <p className="float-chip absolute left-4 top-0 z-10 flex items-center gap-1.5 rounded-full border border-line bg-white px-3 py-1.5 text-sm font-semibold shadow-card lg:-left-6">
+      <p className="float-chip absolute left-4 top-0 z-10 flex items-center gap-1.5 rounded-full border border-line bg-card px-3 py-1.5 text-sm font-semibold shadow-card lg:-left-6">
         <VerifiedIcon className="h-4 w-4 text-brand" />
         {hero.chipVerified}
       </p>
       <p
-        className="float-chip float-chip-delay absolute -bottom-4 right-4 z-10 flex items-center gap-1.5 rounded-full border border-line bg-white px-3 py-1.5 text-sm font-semibold shadow-card lg:-right-6"
+        className="float-chip float-chip-delay absolute -bottom-4 right-4 z-10 flex items-center gap-1.5 rounded-full border border-line bg-card px-3 py-1.5 text-sm font-semibold shadow-card lg:-right-6"
         aria-hidden="true"
       >
         <span className="bg-brand-gradient flex h-5 w-5 items-center justify-center rounded-full text-white">
@@ -92,14 +94,16 @@ export default function ReceiptCard() {
           <Avatar name={creator.name} avatar={creator.avatar} size="h-12 w-12" text="text-base" />
           <div>
             <p className="font-semibold">{creator.name}</p>
-            <p className="text-sm text-ink-soft">{creator.niche}</p>
+            <p className="text-sm text-ink-soft">
+              {messages.featured.niches[creator.niche] ?? creator.niche}
+            </p>
           </div>
         </div>
 
         <dl className="mt-5 space-y-2 text-sm">
           <div className="flex justify-between gap-4">
             <dt className="text-ink-soft">{receipt.packageLabel}</dt>
-            <dd className="font-medium">{sampleOrder.packageName}</dd>
+            <dd className="font-medium">{receipt.packageName}</dd>
           </div>
           <div className="flex justify-between gap-4">
             <dt className="text-ink-soft">{receipt.priceLabel}</dt>
@@ -135,7 +139,7 @@ export default function ReceiptCard() {
               <li key={label} className="flex items-center gap-3 text-sm">
                 <span
                   aria-hidden="true"
-                  className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full border-2 transition-colors duration-500 ${done ? "border-brand bg-brand text-white" : "border-line bg-transparent text-transparent"}`}
+                  className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full border-2 transition-colors duration-500 ${done ? "border-transparent bg-brand-gradient text-white" : "border-line bg-transparent text-transparent"}`}
                 >
                   <CheckIcon className="h-3.5 w-3.5" />
                 </span>

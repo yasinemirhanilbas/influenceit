@@ -12,7 +12,7 @@ export const creators = [
     followers: 42100,
     startingPrice: { amount: 2500, currency: "TRY" },
     verified: true,
-    avatar: { shape: "circle", bg: "#F4C7B8", fg: "#1C1917" },
+    avatar: { shape: "circle", bg: "#F4C2D0", fg: "#22111A" },
   },
   {
     id: "arda-valen",
@@ -38,7 +38,7 @@ export const creators = [
     followers: 18400,
     startingPrice: { amount: 1200, currency: "TRY" },
     verified: true,
-    avatar: { shape: "square", bg: "#E9B949", fg: "#1C1917" },
+    avatar: { shape: "square", bg: "#B0365B", fg: "#FFFFFF" },
   },
   {
     id: "kaan-hollis",
@@ -51,7 +51,7 @@ export const creators = [
     followers: 31900,
     startingPrice: { amount: 2000, currency: "TRY" },
     verified: true,
-    avatar: { shape: "circle", bg: "#F2542D", fg: "#1C1917" },
+    avatar: { shape: "circle", bg: "#E9809F", fg: "#22111A" },
   },
   {
     id: "lale-brandt",
@@ -64,7 +64,7 @@ export const creators = [
     followers: 58200,
     startingPrice: { amount: 3600, currency: "TRY" },
     verified: true,
-    avatar: { shape: "arch", bg: "#DCCDB6", fg: "#1C1917" },
+    avatar: { shape: "arch", bg: "#D9A5B8", fg: "#22111A" },
   },
   {
     id: "deniz-faro",
@@ -77,7 +77,7 @@ export const creators = [
     followers: 24700,
     startingPrice: { amount: 1800, currency: "TRY" },
     verified: true,
-    avatar: { shape: "square", bg: "#1C1917", fg: "#FBF7F0" },
+    avatar: { shape: "square", bg: "#F8E1E8", fg: "#5A1229" },
   },
   {
     id: "zeynep-calder",
@@ -90,7 +90,7 @@ export const creators = [
     followers: 27300,
     startingPrice: { amount: 1500, currency: "TRY" },
     verified: true,
-    avatar: { shape: "square", bg: "#F4C7B8", fg: "#1C1917" },
+    avatar: { shape: "square", bg: "#EBB5C5", fg: "#22111A" },
   },
   {
     id: "emre-quill",
@@ -103,7 +103,7 @@ export const creators = [
     followers: 612000,
     startingPrice: { amount: 9500, currency: "TRY" },
     verified: true,
-    avatar: { shape: "circle", bg: "#22111A", fg: "#FBF7F0" },
+    avatar: { shape: "circle", bg: "#8E2748", fg: "#FFFFFF" },
   },
   {
     id: "defne-harlow",
@@ -116,6 +116,6 @@ export const creators = [
     followers: 38600,
     startingPrice: { amount: 2200, currency: "TRY" },
     verified: true,
-    avatar: { shape: "arch", bg: "#E9B949", fg: "#1C1917" },
+    avatar: { shape: "arch", bg: "#C9728E", fg: "#22111A" },
   },
 ];
