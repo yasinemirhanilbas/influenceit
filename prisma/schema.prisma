@@ -88,6 +88,11 @@ model Order {
   priceAmount   Int
   priceCurrency String    @default("TRY")
   deliveryLink  String?
+  // Copy of the package name at order time (creators can rename packages later).
+  packageName   String    @default("")
+  deliveryNote  String? // creator's note with the delivery
+  revisionNote  String? // brand's request when asking for changes
+  deliveryVideo String? // stored file name in storage/uploads (see lib/storage.js)
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
   paidAt        DateTime?
