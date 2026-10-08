@@ -1,23 +1,30 @@
 import Link from "next/link";
 import Button from "./Button";
+import LanguageSwitcher from "./LanguageSwitcher";
 import MobileNav from "./MobileNav";
-import { messages } from "@/locales";
-import { routes } from "@/lib/routes";
+import { getMessages } from "@/locales";
+import { getNavLinks, getRoutes } from "@/lib/routes";
 
-export default function SiteHeader() {
+export default function SiteHeader({ lang }) {
+  const messages = getMessages(lang);
+  const routes = getRoutes(lang);
   const { header, common } = messages;
+  const navLinks = getNavLinks(lang);
 
   return (
     <>
-      <div className="bg-ink text-paper">
+      <div className="border-b border-line bg-soft text-ink-soft">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-5 py-2 text-xs sm:text-sm">
           <p>{header.supportHours}</p>
-          <a
-            href={`mailto:${header.supportEmail}`}
-            className="hidden hover:underline focus-visible:outline-2 focus-visible:outline-accent sm:inline"
-          >
-            {header.supportEmail}
-          </a>
+          <div className="flex items-center gap-4">
+            <a
+              href={`mailto:${header.supportEmail}`}
+              className="hidden hover:underline focus-visible:outline-2 focus-visible:outline-brand-light sm:inline"
+            >
+              {header.supportEmail}
+            </a>
+            <LanguageSwitcher lang={lang} />
+          </div>
         </div>
       </div>
 
@@ -25,7 +32,7 @@ export default function SiteHeader() {
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-3 px-5">
           <Link
             href={routes.home}
-            className="flex items-center gap-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+            className="flex items-center gap-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-light"
           >
             <span
               aria-hidden="true"
@@ -33,33 +40,45 @@ export default function SiteHeader() {
             >
               I
             </span>
-            <span className="font-display text-xl font-semibold text-brand">
-              {common.brandName}
+            <span className="flex flex-col leading-tight">
+              <span className="font-display text-xl font-semibold text-brand">
+                {common.brandName}
+              </span>
+              <span className="label-mono hidden whitespace-nowrap text-[10px] text-ink-soft sm:block">
+                {header.tagline}
+              </span>
             </span>
           </Link>
 
-          <nav aria-label={header.mainNavLabel} className="hidden md:block">
-            <ul className="flex items-center gap-7 text-sm font-medium">
-              {header.links.map((link) => (
+          <nav aria-label={header.mainNavLabel} className="hidden lg:block">
+            <ul className="label-mono label-tight flex items-center gap-5 text-xs xl:gap-6">
+              {navLinks
+                .filter((link) => link.route !== "stories")
+                .map((link) => (
                 <li key={link.href}>
-                  <a
+                  <Link
                     href={link.href}
-                    className="py-2 text-ink-soft transition hover:text-brand focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+                    className="whitespace-nowrap py-2 text-ink-soft transition-colors duration-[420ms] hover:text-brand focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-light"
                   >
                     {link.label}
-                  </a>
+                  </Link>
                 </li>
               ))}
             </ul>
           </nav>
 
           <div className="flex items-center gap-2">
-            <span className="hidden sm:inline-flex">
-              <Button href={routes.signUpBrand} size="sm" arrow={false}>
-                {common.startAsBrand}
+            <span className="hidden lg:inline-flex">
+              <Button href={routes.login} size="sm" arrow={false} variant="secondary">
+                {header.logIn}
               </Button>
             </span>
-            <MobileNav />
+            <span className="hidden sm:inline-flex lg:hidden xl:inline-flex">
+              <Button href={routes.signUp} size="sm" arrow={false}>
+                {header.signUp}
+              </Button>
+            </span>
+            <MobileNav lang={lang} />
           </div>
         </div>
       </header>

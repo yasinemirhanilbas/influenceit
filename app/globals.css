@@ -1,53 +1,55 @@
 @import "tailwindcss";
 
-/* Paper Trust design tokens */
+/* Dark burgundy design tokens (names kept from the light theme: paper = page, ink = text) */
 @theme {
-  --color-paper: #fbf7f0;
-  --color-card: #ffffff;
-  --color-ink: #22111a;
-  --color-ink-soft: #62505a;
-  --color-brand: #7a1f3d;
-  --color-brand-dark: #5a1229;
-  --color-brand-soft: #f8e1e8;
-  --color-accent: #f2542d;
-  --color-accent-hover: #f77a57;
-  --color-stamp: #b83a1a;
-  --color-line: #eadcd8;
-  --color-brand-light: #b0365b;
+  --color-paper: #14070e;
+  --color-card: #231019;
+  --color-soft: #1b0b13;
 
-  --radius-card: 20px;
-  --shadow-card: 0 10px 30px rgba(90, 18, 41, 0.08);
-  --shadow-glow: 0 8px 20px rgba(122, 31, 61, 0.28);
+  --color-ink: #f7e9ee;
+  --color-ink-soft: #c8aab6;
+  --color-line: #3b1d2b;
+
+  /* One color family: burgundy, lightened for text on dark */
+  --color-brand: #e9809f;
+  --color-brand-dark: #f4b4c8;
+  --color-brand-light: #c2476c;
+  --color-brand-soft: #3a1626;
+  --color-stamp: #f08cab;
+
+  --radius-card: 28px;
+  --shadow-card: 0 14px 40px rgba(0, 0, 0, 0.35);
+  --shadow-glow: 0 8px 24px rgba(194, 71, 108, 0.35);
 }
 
 @theme inline {
-  --font-sans: var(--font-dm-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
   --font-display: var(--font-fraunces), ui-serif, Georgia, serif;
+  --font-mono: var(--font-space-mono), ui-monospace, monospace;
 }
 
 :root {
-  color-scheme: light;
+  color-scheme: dark;
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 body {
   background-color: var(--color-paper);
-  /* Very light paper grain (inline SVG noise, a few hundred bytes) */
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .35 0 0 0 0 .2 0 0 0 0 .2 0 0 0 .05 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   color: var(--color-ink);
   font-family: var(--font-sans);
 }
 
 /* Burgundy gradient helpers */
 .bg-brand-gradient {
-  background-image: linear-gradient(90deg, #7a1f3d, #b0365b);
+  background-image: linear-gradient(90deg, #8e2748, #c2476c);
 }
 
 .bg-brand-gradient-deep {
-  background-image: linear-gradient(135deg, #5a1229, #8e2748);
+  background-image: linear-gradient(135deg, #6a1633, #b0365b);
 }
 
 .text-gradient {
-  background-image: linear-gradient(90deg, #7a1f3d, #b0365b);
+  background-image: linear-gradient(90deg, #f7c3d3, #e9809f);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -62,11 +64,44 @@ body {
   }
 }
 
-/* Soft burgundy and tomato light spots behind the hero */
+/* Soft burgundy light spots behind the hero */
 .hero-glow {
   background-image:
-    radial-gradient(60% 60% at 10% 6%, rgba(122, 31, 61, 0.14), transparent 60%),
-    radial-gradient(50% 50% at 92% 32%, rgba(242, 84, 45, 0.1), transparent 60%);
+    radial-gradient(55% 55% at 12% 4%, rgba(194, 71, 108, 0.28), transparent 62%),
+    radial-gradient(45% 50% at 95% 40%, rgba(122, 31, 61, 0.45), transparent 62%);
+}
+
+/* Burgundy glow inside the closing section */
+.cta-glow {
+  background-image:
+    radial-gradient(50% 70% at 90% 0%, rgba(194, 71, 108, 0.3), transparent 65%),
+    radial-gradient(45% 60% at 5% 100%, rgba(122, 31, 61, 0.5), transparent 65%);
+}
+
+/* Small spaced mono label, used for eyebrows and navigation */
+.label-mono {
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+}
+
+.label-mono.label-tight {
+  letter-spacing: 0.1em;
+}
+
+/* Placeholder content tiles: gradient + soft shape, no photos */
+.tile {
+  position: relative;
+  overflow: hidden;
+  border-radius: 28px;
+  transition:
+    transform 420ms var(--ease-out-expo),
+    box-shadow 420ms var(--ease-out-expo);
+}
+
+.tile:hover {
+  transform: translateY(-6px);
+  box-shadow: var(--shadow-card);
 }
 
 /* "Held in escrow" stamp: static tilt, animated entrance */
@@ -110,18 +145,6 @@ html {
 /* Stamp that pops in each time its text changes */
 .stamp-pop {
   animation: stamp-in 500ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
-}
-
-/* Scalloped paper edge on top of a white section */
-.scallop-top {
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: -10px;
-  height: 10px;
-  background:
-    radial-gradient(circle at 10px 10px, var(--color-card) 9.5px, transparent 10px)
-    0 0 / 20px 10px repeat-x;
 }
 
 /* Logo strip that scrolls sideways */
@@ -194,6 +217,9 @@ html {
   .marquee-track [data-duplicate] {
     display: none;
   }
+  .tile {
+    transition: none;
+  }
   .float-chip,
   .stamp-pop,
   .reveal {
@@ -221,4 +247,9 @@ html {
   .card-in {
     animation: none;
   }
+}
+
+/* Same as .marquee-track but slides the other way */
+.marquee-track-reverse {
+  animation-direction: reverse;
 }

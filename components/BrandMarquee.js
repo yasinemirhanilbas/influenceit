@@ -1,4 +1,4 @@
-import { messages } from "@/locales";
+import { getMessages } from "@/locales";
 import { brands } from "@/data/brands";
 
 const wordmarkStyles = {
@@ -20,7 +20,8 @@ function Wordmarks({ duplicate = false }) {
   ));
 }
 
-export default function BrandMarquee() {
+export default function BrandMarquee({ lang }) {
+  const messages = getMessages(lang);
   const { brandStrip } = messages;
 
   return (

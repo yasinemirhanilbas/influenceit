@@ -7,13 +7,18 @@ const sizes = {
 };
 
 const base =
-  "group inline-flex items-center whitespace-nowrap justify-center gap-2 rounded-full font-semibold transition active:translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent";
+  "group inline-flex items-center whitespace-nowrap justify-center gap-2 rounded-full font-semibold transition active:translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-2";
 
 const variants = {
-  primary: "bg-brand-gradient text-white shadow-glow hover:brightness-110",
-  secondary: "border border-line bg-white text-ink hover:border-ink",
-  accent: "bg-accent text-ink hover:bg-accent-hover",
-  light: "bg-white text-brand hover:bg-brand-soft",
+  primary:
+    "bg-brand-gradient text-white shadow-glow hover:brightness-110 focus-visible:outline-brand-light",
+  secondary:
+    "border border-line bg-card text-ink hover:border-brand focus-visible:outline-brand-light",
+  // For dark, burgundy backgrounds
+  light:
+    "bg-white text-[#5a1229] hover:bg-[#f8e1e8] focus-visible:outline-white",
+  outlineLight:
+    "border border-white/70 text-white hover:bg-white hover:text-[#5a1229] focus-visible:outline-white",
 };
 
 export default function Button({

@@ -1,16 +1,19 @@
 import Avatar from "./Avatar";
 import { StarIcon, VerifiedIcon } from "./icons";
-import { messages, interpolate } from "@/locales";
+import { getMessages, interpolate } from "@/locales";
 import { formatCompactNumber, formatCurrency, formatRating } from "@/lib/format";
 import { getTier } from "@/lib/creators";
+import { getIntlLocale } from "@/locales";
 
-export default function CreatorCard({ creator }) {
+export default function CreatorCard({ creator, lang }) {
+  const messages = getMessages(lang);
   const { common, featured } = messages;
-  const price = formatCurrency(creator.startingPrice.amount, creator.startingPrice.currency);
-  const rating = formatRating(creator.rating);
+  const intl = getIntlLocale(lang);
+  const price = formatCurrency(creator.startingPrice.amount, creator.startingPrice.currency, intl);
+  const rating = formatRating(creator.rating, intl);
 
   return (
-    <article className="flex h-full flex-col rounded-card border border-line bg-paper p-5 shadow-card transition hover:-translate-y-1">
+    <article className="flex h-full flex-col rounded-card border border-line bg-card p-6 shadow-card transition-transform duration-[420ms] ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-1.5">
       <div className="flex items-start gap-4">
         <Avatar name={creator.name} avatar={creator.avatar} />
         <div className="min-w-0">
@@ -29,22 +32,22 @@ export default function CreatorCard({ creator }) {
 
       <div className="mt-4 flex flex-wrap items-center gap-2 text-sm">
         <span className="rounded-full bg-brand-soft px-3 py-1 font-medium text-brand-dark">
-          {creator.niche}
+          {featured.niches[creator.niche] ?? creator.niche}
         </span>
-        <span className="rounded-full border border-line bg-white px-3 py-1 font-medium text-ink-soft">
+        <span className="rounded-full border border-line bg-card px-3 py-1 font-medium text-ink-soft">
           {featured.tiers[getTier(creator.followers)]}
         </span>
         <span className="text-ink-soft">
-          {interpolate(common.followers, { count: formatCompactNumber(creator.followers) })}
+          {interpolate(common.followers, { count: formatCompactNumber(creator.followers, intl) })}
         </span>
       </div>
 
-      <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-ink-soft">
+      <div className="mt-4 mb-5 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-ink-soft">
         <p
           className="flex items-center gap-1.5 font-semibold text-ink"
           aria-label={interpolate(featured.ratingLabel, { rating })}
         >
-          <StarIcon className="h-4 w-4 text-[#E9B949]" />
+          <StarIcon className="h-4 w-4 text-brand-light" />
           {rating}
           <span className="font-normal text-ink-soft">
             ({interpolate(featured.orders, { count: creator.completedOrders })})

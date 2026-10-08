@@ -1,8 +1,8 @@
 import SectionHeading from "./SectionHeading";
 import { CheckIcon, XIcon } from "./icons";
-import { messages } from "@/locales";
+import { getMessages } from "@/locales";
 
-function Cell({ value }) {
+function Cell({ value, messages }) {
   const { common, comparison } = messages;
 
   if (value === "yes") {
@@ -34,12 +34,13 @@ function Cell({ value }) {
   return <span className="text-sm font-medium text-ink-soft">{comparison.manual}</span>;
 }
 
-export default function ComparisonSection() {
+export default function ComparisonSection({ lang }) {
+  const messages = getMessages(lang);
   const { comparison } = messages;
 
   return (
     <section aria-labelledby="comparison-heading" className="border-b border-line">
-      <div className="reveal mx-auto max-w-4xl px-5 py-16 sm:py-20 lg:py-24">
+      <div className="reveal mx-auto max-w-4xl px-5 py-20 sm:py-24 lg:py-32">
         <SectionHeading
           id="comparison-heading"
           eyebrow={comparison.eyebrow}
@@ -79,10 +80,10 @@ export default function ComparisonSection() {
                     {row.label}
                   </th>
                   <td className="bg-brand-soft/60 px-2 py-4 text-center">
-                    <Cell value={row.us} />
+                    <Cell value={row.us} messages={messages} />
                   </td>
                   <td className="px-2 py-4 text-center">
-                    <Cell value={row.others} />
+                    <Cell value={row.others} messages={messages} />
                   </td>
                 </tr>
               ))}
