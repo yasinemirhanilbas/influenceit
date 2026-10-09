@@ -2,8 +2,10 @@
 
 import { startTransition, useActionState, useEffect, useId, useRef, useState } from "react";
 import { getMessages, interpolate } from "@/locales";
-import { DEFAULT_PHONE_CODE, PHONE_CODES, normalizePhone } from "@/lib/phone";
+import { DEFAULT_PHONE_CODE, PHONE_CODES, limitPhoneInput, normalizePhone, phoneRule } from "@/lib/phone";
 import { creatorSignUpAction } from "@/app/[lang]/auth/actions";
+import CreatorServicesStep from "@/components/CreatorServicesStep";
+import { normalizePackages } from "@/lib/services";
 import {
   ABOUT_MAX, CATEGORIES, CITIES, FOLLOWERS_MAX, GALLERY_MAX, GENDERS, IMAGE_ACCEPT, IMAGE_MAX_BYTES, PLATFORMS, USERNAME_PATTERN,
 } from "@/lib/options";
@@ -11,7 +13,8 @@ import {
 // Creator sign-up: a multi-step form. All steps stay mounted (hidden) so one FormData holds every field and photo.
 // Steps live in STEPS; add a step there and a matching <section> below. Error keys map to the step that owns them.
 const STEPS = ["basic", "photos", "social", "services"];
-const ERROR_STEP = { profileImage: 2, imageType: 2, imageSize: 2, platforms: 3, socialUsername: 3, socialFollowers: 3 };
+const ERROR_STEP = { profileImage: 2, imageType: 2, imageSize: 2, platforms: 3, socialUsername: 3, socialFollowers: 3, services: 4, servicePrice: 4, serviceDetails: 4,
+};
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const inputClass =
@@ -181,8 +184,12 @@ export default function CreatorSignupWizard({ lang }) {
   const [step, setStep] = useState(1);
   const [error, setError] = useState(null);
   const [picked, setPicked] = useState([]);
+  const [phoneCode, setPhoneCode] = useState(DEFAULT_PHONE_CODE);
+  const [phone, setPhone] = useState("");
   const [platforms, setPlatforms] = useState([]);
   const [activePlatform, setActivePlatform] = useState(null);
+  const [packages, setPackages] = useState([]);
+  const [servicePlatform, setServicePlatform] = useState(null);
   const [state, formAction, pending] = useActionState(creatorSignUpAction, null);
   const [seenState, setSeenState] = useState(null);
 
@@ -208,6 +215,8 @@ export default function CreatorSignupWizard({ lang }) {
     if (platforms.includes(id)) {
       const rest = platforms.filter((item) => item !== id);
       setPlatforms(rest);
+      // Packages of a platform that is no longer listed would be rejected, so drop them with it.
+      setPackages((current) => current.filter((pkg) => pkg.platform !== id));
       if (activePlatform === id) setActivePlatform(rest[0] ?? null);
     } else {
       setPlatforms([...platforms, id]);
@@ -225,13 +234,21 @@ export default function CreatorSignupWizard({ lang }) {
     event.preventDefault();
     const data = new FormData(formRef.current);
     // Check every step up to the current one, so nobody moves on (or submits) with an earlier step incomplete.
-    const checks = [() => checkBasic(data, picked), () => checkPhotos(data), () => checkSocial(data, platforms)];
+    const checks = [
+      () => checkBasic(data, picked),
+      () => checkPhotos(data),
+      () => checkSocial(data, platforms),
+      () => normalizePackages(packages, platforms),
+    ];
     for (let index = 0; index < Math.min(step, checks.length); index += 1) {
       const result = checks[index]();
       const key = typeof result === "string" ? result : result?.error;
       if (key) {
         setError(key);
-        if (result?.platform) setActivePlatform(result.platform);
+        if (result?.platform) {
+          setActivePlatform(result.platform);
+          setServicePlatform(result.platform);
+        }
         setStep(index + 1);
         return;
       }
@@ -256,6 +273,11 @@ export default function CreatorSignupWizard({ lang }) {
       {platforms.map((id) => (
         <input key={id} type="hidden" name="platforms" value={id} />
       ))}
+      <input
+        type="hidden"
+        name="packages"
+        value={JSON.stringify(packages.map(({ key, ...pkg }) => pkg))}
+      />
 
       <nav aria-label={interpolate(copy.stepOf, { current: step, total: STEPS.length })}>
         <ol className="flex items-center gap-2">
@@ -324,7 +346,16 @@ export default function CreatorSignupWizard({ lang }) {
         <label className="block">
           <span className="text-sm font-semibold">{copy.phone}</span>
           <div className="mt-2 flex gap-3">
-            <select name="phoneCode" defaultValue={DEFAULT_PHONE_CODE} aria-label={copy.phoneCode} className={phoneCodeClass}>
+            <select
+              name="phoneCode"
+              value={phoneCode}
+              onChange={(event) => {
+                setPhoneCode(event.target.value);
+                setPhone((current) => limitPhoneInput(event.target.value, current));
+              }}
+              aria-label={copy.phoneCode}
+              className={phoneCodeClass}
+            >
               {PHONE_CODES.map((item) => (
                 <option key={item.code} value={item.code}>{item.label}</option>
               ))}
@@ -333,13 +364,17 @@ export default function CreatorSignupWizard({ lang }) {
               name="phone"
               type="tel"
               autoComplete="tel-national"
-              inputMode="tel"
-              placeholder={copy.phonePlaceholder}
+              inputMode="numeric"
+              value={phone}
+              onChange={(event) => setPhone(limitPhoneInput(phoneCode, event.target.value))}
+              placeholder={phoneRule(phoneCode)?.example}
               aria-required="true"
               className={phoneInputClass}
             />
           </div>
-          <span className="mt-1 block text-sm text-ink-soft">{copy.phoneHint}</span>
+          <span className="mt-1 block text-sm text-ink-soft">
+            {copy.phoneHint} {interpolate(copy.phoneDigits, { count: phoneRule(phoneCode).min === phoneRule(phoneCode).max ? phoneRule(phoneCode).max : `${phoneRule(phoneCode).min}-${phoneRule(phoneCode).max}` })}
+          </span>
         </label>
 
         <fieldset>
@@ -501,10 +536,17 @@ export default function CreatorSignupWizard({ lang }) {
         ))}
       </section>
 
-      {/* Step 4: services (empty for now) */}
-      <section hidden={step !== 4} className="mt-6 space-y-3">
-        <h2 className="font-display text-xl font-semibold">{copy.servicesTitle}</h2>
-        <p className="rounded-xl bg-soft p-4 text-sm text-ink-soft">{copy.servicesText}</p>
+      {/* Step 4: services and prices */}
+      <section hidden={step !== 4} className="mt-6">
+        <CreatorServicesStep
+          copy={copy}
+          platforms={platforms}
+          packages={packages}
+          setPackages={setPackages}
+          activePlatform={servicePlatform}
+          setActivePlatform={setServicePlatform}
+          PlatformIcon={PlatformIcon}
+        />
       </section>
 
       {errorMessage ? (

@@ -7,9 +7,10 @@ import { deleteImages, inspectImage, saveImage } from "@/lib/images";
 import { ABOUT_MAX, CATEGORIES, CITIES, FOLLOWERS_MAX, GALLERY_MAX, GENDERS, NICHES, PLATFORMS, USERNAME_PATTERN } from "@/lib/options";
 import { hashPassword, verifyPassword } from "@/lib/password.mjs";
 import { normalizePhone } from "@/lib/phone";
+import { normalizePackages, packageName } from "@/lib/services";
 import { getRoutes } from "@/lib/routes";
 import { endSession, startSession } from "@/lib/session";
-import { getMessages, isLocale } from "@/locales";
+import { getMessages, interpolate as interpolateText, isLocale } from "@/locales";
 
 // Server actions for sign-up, log-in and log-out.
 // They return { error: "<key>" } on failure; the forms translate the key with locales (signup.errors / login.errors).
@@ -91,7 +92,7 @@ export async function signUpAction(_previous, formData) {
   redirect(getRoutes(lang).account);
 }
 
-// Creator sign-up (multi-step form). Steps: 1 basic info, 2 photos, 3 social accounts (4 services: nothing to send yet).
+// Creator sign-up (multi-step form). Steps: 1 basic info, 2 photos, 3 social accounts, 4 services and prices.
 // Errors carry a key from signup.errors.
 export async function creatorSignUpAction(_previous, formData) {
   const lang = safeLang(formData);
@@ -143,6 +144,31 @@ export async function creatorSignUpAction(_previous, formData) {
   }
   const totalFollowers = socialAccounts.reduce((sum, account) => sum + account.followers, 0);
 
+  // Step 4: packages the creator sells (JSON from the form), each on one of the listed platforms.
+  let rawPackages = null;
+  try {
+    rawPackages = JSON.parse(String(formData.get("packages") ?? ""));
+  } catch {
+    return { error: "services" };
+  }
+  const checked = normalizePackages(rawPackages, picked);
+  if (checked.error) return { error: checked.error };
+  const services = getMessages(lang).signup.creator.services;
+  const packageRows = checked.packages.map((pkg) => {
+    const name = packageName(pkg.platform, pkg.items, services);
+    return {
+      name,
+      description: interpolateText(services.autoDescription, { name, days: pkg.deliveryDays, revisions: pkg.revisions }),
+      priceAmount: pkg.price,
+      priceCurrency: "TRY",
+      deliveryDays: pkg.deliveryDays,
+      platform: pkg.platform,
+      contents: JSON.stringify(pkg.items),
+      revisions: pkg.revisions,
+      stay: pkg.stay,
+    };
+  });
+
   if (await db.user.findUnique({ where: { email } })) return { error: "emailTaken" };
 
   // Everything is valid: now write the photos to disk, then the account.
@@ -177,12 +203,13 @@ export async function creatorSignUpAction(_previous, formData) {
             followers: totalFollowers,
             rating: 0,
             completedOrders: 0,
-            deliveryDays: 3,
+            deliveryDays: Math.min(...packageRows.map((row) => row.deliveryDays)),
             verified: false,
             avatarShape: AVATAR_SHAPES[slug.length % AVATAR_SHAPES.length],
             avatarBg: AVATAR_COLORS[pick][0],
             avatarFg: AVATAR_COLORS[pick][1],
             socialAccounts: { create: socialAccounts },
+            packages: { create: packageRows },
           },
         },
       },
