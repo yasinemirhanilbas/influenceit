@@ -1,4 +1,4 @@
-// Placeholder avatar: a geometric shape with initials. No photos are used.
+// Avatar: the creator's profile photo when there is one, otherwise a geometric shape with initials.
 const shapes = {
   circle: "rounded-full",
   square: "rounded-2xl",
@@ -15,6 +15,19 @@ function getInitials(name) {
 }
 
 export default function Avatar({ name, avatar, size = "h-14 w-14", text = "text-lg" }) {
+  if (avatar.image) {
+    return (
+      // Photos are user uploads served by /api/images; next/image optimisation is not needed for these small avatars.
+      // eslint-disable-next-line @next/next/no-img-element
+      <img
+        src={avatar.image}
+        alt=""
+        aria-hidden="true"
+        loading="lazy"
+        className={`shrink-0 object-cover ${size} ${shapes[avatar.shape] ?? shapes.circle}`}
+      />
+    );
+  }
   return (
     <span
       aria-hidden="true"
