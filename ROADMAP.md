@@ -24,7 +24,7 @@ Influencer ve markaları buluşturan bir pazaryeri prototipi. Amaç: ölçeklene
 
 - [ ] GitHub reposu açık, arkadaş davet edildi (kabul bekleniyor)
 - [ ] Node.js ve Git kurulu olduğunu doğrula (`node -v`, `git -v`)
-- [ ] Branch kuralı: `main` dalı sağlam kalır, her iş için `feature/...` dalı + pull request
+- [x] Git kuralı (güncellendi 2026-10-10): doğrudan `main` üzerinde çalışılır, her push'tan önce Fetch + Pull; büyük riskli işler için isteğe bağlı kısa dal
 - [ ] `.gitignore` içinde `node_modules/`, `.env`, `*.db` olduğundan emin ol
 - [ ] İş bölümü: kim hangi sayfayı yapıyor (çakışmayı önler)
 

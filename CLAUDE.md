@@ -21,7 +21,7 @@ SQLite + Prisma). Lives in the `influenceit` folder. Demo/interview project, run
 - Seed data is fictional: no real people, brands or logos.
 - Prices are stored as number + currency code; formatting uses the Intl API.
 - Never commit .env, node_modules, or *.db files.
-- Git: no direct pushes to main; use feature/* branches and pull requests.
+- Git: we work directly on `main` (no feature branches or pull requests). Before starting work and before every push: Fetch origin, then Pull origin. Commit small and often. Check that `npm run dev` starts before pushing. Tell each other which files you are working on to avoid conflicts. Branches are optional, only for big risky changes (for example database schema changes).
 
 ## Done means
 App starts without errors and the changed flow works end to end.
@@ -44,7 +44,7 @@ App starts without errors and the changed flow works end to end.
 - Creator photos (2026-10-09): stored as files in `storage/images/` (git-ignored) under random names; the database keeps only the names (`CreatorProfile.profileImage`, `galleryImages`). Type is detected from file bytes (`lib/images.js`); public route `app/api/images/[name]`. Creator sign-up is a multi-step client form (`components/CreatorSignupWizard.js`, steps listed in its `STEPS`) that calls `creatorSignUpAction` itself instead of `<form action>`, so a server error does not wipe typed values.
 
 ## Current status
-Phase 1 in progress: multi-page bilingual site (home, creators, jobs, how-it-works, login, signup) with static data. Prisma schema, seed and `npm run reset` are done (from feature/database). Home, creators and jobs pages read from the database (`Job` and `Application` models added). Creator profile page `/{lang}/creators/[slug]`, real login/sign-up and the 4-step creator sign-up wizard (basic info, photos, social accounts, services and prices) with photos shown on cards, profile and account pages (`/{lang}/account`) are done; brand sign-up asks for sector (11 options), company title and phone. Not yet: brand job-posting form, applying to jobs, package editing, ordering. Git: private repo github.com/yasinemirhanilbas/influenceit; work goes through feature/* branches and pull requests. After pulling: stop the dev server, run `npm install`, then `npm run reset` (creates and fills `dev.db`), then `npm run dev`.
+Phase 1 in progress: multi-page bilingual site (home, creators, jobs, how-it-works, login, signup) with static data. Prisma schema, seed and `npm run reset` are done (from feature/database). Home, creators and jobs pages read from the database (`Job` and `Application` models added). Creator profile page `/{lang}/creators/[slug]`, real login/sign-up and the 4-step creator sign-up wizard (basic info, photos, social accounts, services and prices) with photos shown on cards, profile and account pages (`/{lang}/account`) are done; brand sign-up asks for sector (11 options), company title and phone. Not yet: brand job-posting form, applying to jobs, package editing, ordering. Git: private repo github.com/yasinemirhanilbas/influenceit; work happens directly on `main` (pull before every push). After pulling: stop the dev server, run `npm install`, then `npm run reset` (creates and fills `dev.db`), then `npm run dev`.
 
 ## Backlog / ideas
 (not approved yet)

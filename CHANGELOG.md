@@ -2,6 +2,9 @@
 
 Approved changes, newest first. Format: date, what, files, why.
 
+## 2026-10-10 (git workflow: work on main)
+- Decided together to drop the feature-branch and pull-request rule: everyone works directly on `main`, with Fetch + Pull before every push and small, frequent commits. The old rule caused too much confusion (stashes, wrong branch, pull/push buttons). Files: `CLAUDE.md` (Conventions, Current status), `ROADMAP.md`.
+
 ## 2026-10-10 (brand sign-up: sectors, company title, phone)
 - Brand sign-up form now has an 11-item sector list (Cosmetics & Beauty, Fashion & Lifestyle, Technology, Restaurant & Food, Fitness & Health, Home & Decor, Travel & Hotel, Education, Finance, E-commerce, Other; "Select a sector..." as placeholder), a required "Company title" under the brand name (up to 100 characters) and a required phone number with country code (same rules as the creator form: digits only, limited to the country's length). The server checks all three again.
 - Schema (approved): `BrandProfile` gets optional `companyTitle` and `phone` (optional so older brands keep working). `npm run reset` is needed after pulling.
