@@ -75,6 +75,8 @@ model BrandProfile {
   id             Int    @id @default(autoincrement())
   userId         Int    @unique
   companyName    String
+  companyTitle   String?
+  phone          String?
   industry       String
   budgetAmount   Int?
   budgetCurrency String @default("TRY")

@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 import { updateTag } from "next/cache";
 import { db } from "@/lib/db";
 import { deleteImages, inspectImage, saveImage } from "@/lib/images";
-import { ABOUT_MAX, CATEGORIES, CITIES, FOLLOWERS_MAX, GALLERY_MAX, GENDERS, NICHES, PLATFORMS, USERNAME_PATTERN } from "@/lib/options";
+import { ABOUT_MAX, BRAND_SECTORS, CATEGORIES, CITIES, COMPANY_TITLE_MAX, FOLLOWERS_MAX, GALLERY_MAX, GENDERS, PLATFORMS, USERNAME_PATTERN } from "@/lib/options";
 import { hashPassword, verifyPassword } from "@/lib/password.mjs";
 import { normalizePhone } from "@/lib/phone";
 import { normalizePackages, packageName } from "@/lib/services";
@@ -61,13 +61,17 @@ export async function signUpAction(_previous, formData) {
   const email = text(formData, "email").toLowerCase();
   const password = String(formData.get("password") ?? "");
   const companyName = text(formData, "companyName");
+  const companyTitle = text(formData, "companyTitle");
   const industry = text(formData, "niche");
+  const phone = normalizePhone(text(formData, "phoneCode"), text(formData, "phone"));
 
   if (!firstName || !lastName || firstName.length > 40 || lastName.length > 40) return { error: "name" };
   if (!EMAIL.test(email)) return { error: "email" };
   if (password.length < 8) return { error: "password" };
   if (!companyName || companyName.length > 60) return { error: "company" };
-  if (!NICHES.includes(industry)) return { error: "niche" };
+  if (!companyTitle || companyTitle.length > COMPANY_TITLE_MAX) return { error: "companyTitle" };
+  if (!phone) return { error: "phone" };
+  if (!BRAND_SECTORS.includes(industry)) return { error: "niche" };
   if (formData.get("terms") !== "on") return { error: "terms" };
   if (await db.user.findUnique({ where: { email } })) return { error: "emailTaken" };
 
@@ -79,7 +83,7 @@ export async function signUpAction(_previous, formData) {
         name: `${firstName} ${lastName}`,
         email,
         passwordHash: await hashPassword(password),
-        brandProfile: { create: { companyName, industry } },
+        brandProfile: { create: { companyName, companyTitle, phone, industry } },
       },
     });
   } catch (error) {

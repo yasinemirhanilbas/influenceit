@@ -6,7 +6,8 @@ import { useSearchParams } from "next/navigation";
 import { getMessages, interpolate } from "@/locales";
 import { signUpAction } from "@/app/[lang]/auth/actions";
 import CreatorSignupWizard from "@/components/CreatorSignupWizard";
-import { NICHES } from "@/lib/options";
+import PhoneField from "@/components/PhoneField";
+import { BRAND_SECTORS } from "@/lib/options";
 import { getRoutes } from "@/lib/routes";
 
 const inputClass =
@@ -100,11 +101,18 @@ function BrandForm({ lang, signup, featured }) {
           <input name="companyName" type="text" required maxLength={60} className={inputClass} />
         </label>
         <label className="block">
+          <span className="text-sm font-semibold">{signup.companyTitle}</span>
+          <input name="companyTitle" type="text" required maxLength={100} autoComplete="organization" className={inputClass} />
+        </label>
+        <PhoneField
+          copy={{ label: signup.creator.phone, hint: signup.creator.phoneHint, code: signup.creator.phoneCode, digits: signup.creator.phoneDigits }}
+        />
+        <label className="block">
           <span className="text-sm font-semibold">{signup.industry}</span>
           <select name="niche" required defaultValue="" className={inputClass}>
-            <option value="" disabled>{signup.nichePlaceholder}</option>
-            {NICHES.map((niche) => (
-              <option key={niche} value={niche}>{featured.niches[niche]}</option>
+            <option value="" disabled>{signup.sectorPlaceholder}</option>
+            {BRAND_SECTORS.map((sector) => (
+              <option key={sector} value={sector}>{signup.sectors[sector]}</option>
             ))}
           </select>
         </label>

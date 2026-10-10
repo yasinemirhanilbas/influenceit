@@ -54,9 +54,9 @@ const BIOS = {
 
 // name | industry | budget (TRY)
 const BRANDS = [
-  ["Northloom Coffee", "Food & Drink", 30000],
+  ["Northloom Coffee", "Food", 30000],
   ["Marlow & Finch", "Fashion", 45000],
-  ["Tamarind Lane", "Food & Drink", 20000],
+  ["Tamarind Lane", "Food", 20000],
   ["Kiln & Co.", "Home", 25000],
   ["Oakmoor Goods", "Home", 35000],
   ["Sunday Fig", "Beauty", 40000],
@@ -161,7 +161,7 @@ async function main() {
     const user = await db.user.create({ data: { role: "BRAND", name: companyName, email: `${companyName.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "")}@example.com`, passwordHash } });
     brands.push(
       await db.brandProfile.create({
-        data: { userId: user.id, companyName, industry, budgetAmount: budget, budgetCurrency: CURRENCY },
+        data: { userId: user.id, companyName, companyTitle: `${companyName} Ltd.`, phone: `+90555010${String(brands.length).padStart(4, "0")}`, industry, budgetAmount: budget, budgetCurrency: CURRENCY },
       }),
     );
   }

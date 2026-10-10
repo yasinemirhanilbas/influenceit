@@ -2,7 +2,8 @@
 
 import { startTransition, useActionState, useEffect, useId, useRef, useState } from "react";
 import { getMessages, interpolate } from "@/locales";
-import { DEFAULT_PHONE_CODE, PHONE_CODES, limitPhoneInput, normalizePhone, phoneRule } from "@/lib/phone";
+import { normalizePhone } from "@/lib/phone";
+import PhoneField from "@/components/PhoneField";
 import { creatorSignUpAction } from "@/app/[lang]/auth/actions";
 import CreatorServicesStep from "@/components/CreatorServicesStep";
 import { normalizePackages } from "@/lib/services";
@@ -21,9 +22,6 @@ const inputClass =
   "mt-2 min-h-12 w-full rounded-xl border border-line bg-paper px-4 text-base text-ink placeholder:text-ink-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-light";
 const buttonFocus = "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-light";
 
-// The phone row sits side by side: a fixed-width country code select and an input that takes the rest.
-const phoneCodeClass = inputClass.replace("mt-2 ", "").replace("w-full", "w-32 shrink-0");
-const phoneInputClass = inputClass.replace("mt-2 ", "").replace("w-full", "min-w-0 flex-1");
 
 // Same rules as creatorSignUpAction (the server checks again). Returns an error key or null.
 function checkBasic(data, categories) {
@@ -184,8 +182,6 @@ export default function CreatorSignupWizard({ lang }) {
   const [step, setStep] = useState(1);
   const [error, setError] = useState(null);
   const [picked, setPicked] = useState([]);
-  const [phoneCode, setPhoneCode] = useState(DEFAULT_PHONE_CODE);
-  const [phone, setPhone] = useState("");
   const [platforms, setPlatforms] = useState([]);
   const [activePlatform, setActivePlatform] = useState(null);
   const [packages, setPackages] = useState([]);
@@ -343,39 +339,7 @@ export default function CreatorSignupWizard({ lang }) {
             </select>
           </label>
         </div>
-        <label className="block">
-          <span className="text-sm font-semibold">{copy.phone}</span>
-          <div className="mt-2 flex gap-3">
-            <select
-              name="phoneCode"
-              value={phoneCode}
-              onChange={(event) => {
-                setPhoneCode(event.target.value);
-                setPhone((current) => limitPhoneInput(event.target.value, current));
-              }}
-              aria-label={copy.phoneCode}
-              className={phoneCodeClass}
-            >
-              {PHONE_CODES.map((item) => (
-                <option key={item.code} value={item.code}>{item.label}</option>
-              ))}
-            </select>
-            <input
-              name="phone"
-              type="tel"
-              autoComplete="tel-national"
-              inputMode="numeric"
-              value={phone}
-              onChange={(event) => setPhone(limitPhoneInput(phoneCode, event.target.value))}
-              placeholder={phoneRule(phoneCode)?.example}
-              aria-required="true"
-              className={phoneInputClass}
-            />
-          </div>
-          <span className="mt-1 block text-sm text-ink-soft">
-            {copy.phoneHint} {interpolate(copy.phoneDigits, { count: phoneRule(phoneCode).min === phoneRule(phoneCode).max ? phoneRule(phoneCode).max : `${phoneRule(phoneCode).min}-${phoneRule(phoneCode).max}` })}
-          </span>
-        </label>
+        <PhoneField copy={{ label: copy.phone, hint: copy.phoneHint, code: copy.phoneCode, digits: copy.phoneDigits }} />
 
         <fieldset>
           <legend className="text-sm font-semibold">

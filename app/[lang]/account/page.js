@@ -28,7 +28,7 @@ function Row({ label, value }) {
 // Reads the login cookie, so it must render at request time (inside Suspense).
 async function AccountContent({ lang }) {
   const routes = getRoutes(lang);
-  const { account, featured, profile } = getMessages(lang);
+  const { account, featured, profile, signup } = getMessages(lang);
   const categoryLabel = (id) => featured.niches[id] ?? id;
   const user = await getSessionUser();
   if (!user) redirect(routes.login);
@@ -45,7 +45,9 @@ async function AccountContent({ lang }) {
     ]);
     rows.push(
       { label: account.companyLabel, value: user.brandProfile.companyName },
-      { label: account.industryLabel, value: featured.niches[user.brandProfile.industry] ?? user.brandProfile.industry },
+      { label: account.companyTitleLabel, value: user.brandProfile.companyTitle ?? "-" },
+      { label: account.phoneLabel, value: user.brandProfile.phone ?? "-" },
+      { label: account.industryLabel, value: signup.sectors[user.brandProfile.industry] ?? featured.niches[user.brandProfile.industry] ?? user.brandProfile.industry },
       { label: account.jobsLabel, value: String(jobs) },
       { label: account.ordersLabel, value: String(orders) },
     );
