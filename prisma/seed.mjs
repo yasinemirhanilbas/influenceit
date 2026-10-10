@@ -100,6 +100,7 @@ const ORDERS = [
 
 async function main() {
   // Wipe in dependency order so the seed can be re-run safely.
+  await db.socialAccount.deleteMany();
   await db.application.deleteMany();
   await db.job.deleteMany();
   await db.order.deleteMany();
@@ -119,6 +120,7 @@ async function main() {
         slug,
         handle,
         niche,
+        categories: niche,
         city: CITIES[index % CITIES.length],
         bio: BIOS[niche],
         followers,
@@ -129,6 +131,16 @@ async function main() {
         avatarShape,
         avatarBg,
         avatarFg,
+        // Split the follower total over one or two platforms so the numbers add up.
+        socialAccounts: {
+          create:
+            index % 2 === 0
+              ? [
+                  { platform: "instagram", username: handle.replace(/^@/, ""), followers: Math.round(followers * 0.7) },
+                  { platform: "tiktok", username: handle.replace(/^@/, ""), followers: followers - Math.round(followers * 0.7) },
+                ]
+              : [{ platform: "instagram", username: handle.replace(/^@/, ""), followers }],
+        },
         packages: {
           create: PACKAGE_TEMPLATES.map((template) => ({
             name: template.name,

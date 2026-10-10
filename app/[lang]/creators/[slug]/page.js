@@ -98,6 +98,25 @@ export default async function CreatorProfilePage({ params }) {
           <p className="mt-3 text-lg leading-relaxed text-ink-soft">{creator.bio}</p>
         </div>
 
+        {creator.gallery.length > 0 ? (
+          <div className="mt-12">
+            <h2 className="font-display text-2xl font-semibold">{profile.galleryHeading}</h2>
+            <ul className="mt-6 grid max-w-3xl grid-cols-3 gap-3 sm:gap-5">
+              {creator.gallery.map((src, index) => (
+                <li key={src}>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={src}
+                    alt={interpolate(profile.photoAlt, { name: creator.name, number: index + 1 })}
+                    loading="lazy"
+                    className="aspect-square w-full rounded-card border border-line object-cover"
+                  />
+                </li>
+              ))}
+            </ul>
+          </div>
+        ) : null}
+
         <div className="mt-12">
           <h2 className="font-display text-2xl font-semibold">{profile.packagesHeading}</h2>
           <p className="mt-2 text-ink-soft">{profile.packagesNote}</p>

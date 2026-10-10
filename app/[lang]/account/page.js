@@ -1,8 +1,10 @@
 import { Suspense } from "react";
 import { notFound, redirect } from "next/navigation";
+import Avatar from "@/components/Avatar";
 import Button from "@/components/Button";
 import PageHeader from "@/components/PageHeader";
 import { db } from "@/lib/db";
+import { imageUrl, splitList } from "@/lib/images";
 import { getRoutes } from "@/lib/routes";
 import { getSessionUser } from "@/lib/session";
 import { logOutAction } from "@/app/[lang]/auth/actions";
@@ -27,6 +29,7 @@ function Row({ label, value }) {
 async function AccountContent({ lang }) {
   const routes = getRoutes(lang);
   const { account, featured, profile } = getMessages(lang);
+  const categoryLabel = (id) => featured.niches[id] ?? id;
   const user = await getSessionUser();
   if (!user) redirect(routes.login);
 
@@ -55,7 +58,10 @@ async function AccountContent({ lang }) {
     hasPackages = packages > 0;
     rows.push(
       { label: account.handleLabel, value: creator.handle },
-      { label: account.nicheLabel, value: featured.niches[creator.niche] ?? creator.niche },
+      {
+        label: account.categoriesLabel,
+        value: (splitList(creator.categories).length ? splitList(creator.categories) : [creator.niche]).map(categoryLabel).join(", "),
+      },
       { label: account.cityLabel, value: profile.cities[creator.city] ?? creator.city },
       { label: account.applicationsLabel, value: String(applications) },
       { label: account.ordersLabel, value: String(orders) },
@@ -67,6 +73,30 @@ async function AccountContent({ lang }) {
       <p className="label-mono text-xs font-bold text-brand">{isBrand ? account.roleBrand : account.roleCreator}</p>
       <h2 className="mt-2 font-display text-3xl font-semibold">{interpolate(account.welcome, { name: user.name })}</h2>
       <p className="mt-2 text-ink-soft">{isBrand ? account.brandNext : account.creatorNext}</p>
+
+      {creator ? (
+        <div className="mt-8 flex flex-wrap items-center gap-4">
+          <Avatar
+            name={user.name}
+            avatar={{ shape: creator.avatarShape, bg: creator.avatarBg, fg: creator.avatarFg, image: imageUrl(creator.profileImage) }}
+            size="h-20 w-20"
+            text="text-2xl"
+          />
+          {splitList(creator.galleryImages).length > 0 ? (
+            <div>
+              <p className="label-mono text-xs text-ink-soft">{account.photosHeading}</p>
+              <ul className="mt-2 flex gap-2">
+                {splitList(creator.galleryImages).map((name) => (
+                  <li key={name}>
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={imageUrl(name)} alt="" loading="lazy" className="h-16 w-16 rounded-xl border border-line object-cover" />
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ) : null}
+        </div>
+      ) : null}
 
       <dl className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {rows.map((row) => (

@@ -31,6 +31,12 @@ model CreatorProfile {
   niche           String
   city            String
   bio             String
+  // Sign-up details. Lists are plain strings: ids separated by commas (categories) or file names separated by commas (galleryImages).
+  gender          String?
+  phone           String?
+  categories      String  @default("")
+  profileImage    String?
+  galleryImages   String  @default("")
   followers       Int
   rating          Float
   completedOrders Int
@@ -44,9 +50,25 @@ model CreatorProfile {
   packages     Package[]
   orders       Order[]
   applications Application[]
+  socialAccounts SocialAccount[]
 
   @@index([niche])
   @@index([city])
+}
+
+// One social media account of a creator. The follower count is typed in by the creator (not checked).
+// CreatorProfile.followers is the sum over all of a creator's accounts.
+model SocialAccount {
+  id        Int      @id @default(autoincrement())
+  creatorId Int
+  platform  String // "instagram" | "tiktok" | "youtube" | "x" | "kick" (see lib/options.js PLATFORMS)
+  username  String // without the leading @
+  followers Int
+  createdAt DateTime @default(now())
+
+  creator CreatorProfile @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+
+  @@unique([creatorId, platform])
 }
 
 model BrandProfile {
@@ -70,6 +92,12 @@ model Package {
   priceAmount   Int
   priceCurrency String @default("TRY")
   deliveryDays  Int
+  // Filled for packages made in the sign-up wizard: the platform, the contents as JSON ([{ "type", "count" }]),
+  // the number of included revisions and how long the content stays online ("", "24h", "7d", "30d", "permanent").
+  platform      String @default("")
+  contents      String @default("")
+  revisions     Int    @default(1)
+  stay          String @default("")
 
   creator CreatorProfile @relation(fields: [creatorId], references: [id], onDelete: Cascade)
   orders  Order[]

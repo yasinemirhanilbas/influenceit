@@ -25,3 +25,6 @@ npm-debug.log*
 /coverage
 
 .preview/
+
+# uploaded delivery videos (kept on this computer only)
+storage/

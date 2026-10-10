@@ -1,11 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { useActionState, useState } from "react";
+import { startTransition, useActionState, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { getMessages, interpolate } from "@/locales";
 import { signUpAction } from "@/app/[lang]/auth/actions";
-import { CITIES, NICHES } from "@/lib/options";
+import CreatorSignupWizard from "@/components/CreatorSignupWizard";
+import { NICHES } from "@/lib/options";
 import { getRoutes } from "@/lib/routes";
 
 const inputClass =
@@ -60,12 +61,85 @@ function RoleCard({ active, onClick, icon, title, text }) {
   );
 }
 
+// Brand sign-up: a single short form.
+function BrandForm({ lang, signup, featured }) {
+  const [state, formAction, pending] = useActionState(signUpAction, null);
+
+  function handleSubmit(event) {
+    event.preventDefault();
+    // Calling the action ourselves (not through <form action>) keeps typed values after a server error.
+    const data = new FormData(event.currentTarget);
+    startTransition(() => formAction(data));
+  }
+
+  return (
+    <form onSubmit={handleSubmit} className="mt-6 rounded-card border border-line bg-card p-6 shadow-card sm:p-8">
+      <input type="hidden" name="lang" value={lang} />
+      <div className="space-y-5">
+        <div className="grid gap-5 sm:grid-cols-2">
+          <label className="block">
+            <span className="text-sm font-semibold">{signup.firstName}</span>
+            <input name="firstName" type="text" required autoComplete="given-name" className={inputClass} />
+          </label>
+          <label className="block">
+            <span className="text-sm font-semibold">{signup.lastName}</span>
+            <input name="lastName" type="text" required autoComplete="family-name" className={inputClass} />
+          </label>
+        </div>
+        <label className="block">
+          <span className="text-sm font-semibold">{signup.email}</span>
+          <input name="email" type="email" required autoComplete="email" className={inputClass} />
+        </label>
+        <label className="block">
+          <span className="text-sm font-semibold">{signup.passwordLabel}</span>
+          <input name="password" type="password" required minLength={8} autoComplete="new-password" className={inputClass} />
+          <span className="mt-1 block text-sm text-ink-soft">{signup.passwordHint}</span>
+        </label>
+        <label className="block">
+          <span className="text-sm font-semibold">{signup.company}</span>
+          <input name="companyName" type="text" required maxLength={60} className={inputClass} />
+        </label>
+        <label className="block">
+          <span className="text-sm font-semibold">{signup.industry}</span>
+          <select name="niche" required defaultValue="" className={inputClass}>
+            <option value="" disabled>{signup.nichePlaceholder}</option>
+            {NICHES.map((niche) => (
+              <option key={niche} value={niche}>{featured.niches[niche]}</option>
+            ))}
+          </select>
+        </label>
+      </div>
+
+      <label className="mt-6 flex items-start gap-3">
+        <input name="terms" type="checkbox" required className="mt-1 h-5 w-5 shrink-0 accent-[#c2476c]" />
+        <span className="text-ink-soft">{signup.terms}</span>
+      </label>
+
+      <p className="mt-6 rounded-xl bg-soft p-4 text-sm text-ink-soft">{signup.infoBrand}</p>
+
+      {state?.error ? (
+        <p role="alert" className="mt-6 rounded-xl border border-brand-light bg-brand-soft p-4 text-sm text-brand-dark">
+          {signup.errors[state.error] ?? signup.errors.generic}
+        </p>
+      ) : null}
+
+      <button
+        type="submit"
+        disabled={pending}
+        className="bg-brand-gradient disabled:opacity-60 mt-6 min-h-12 w-full rounded-full px-7 font-semibold text-white shadow-glow transition hover:brightness-110 active:translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-light"
+      >
+        {pending ? signup.submitting : signup.submit}
+      </button>
+      <p className="mt-4 text-center text-sm text-ink-soft">{signup.note}</p>
+    </form>
+  );
+}
+
 export default function SignupForm({ lang }) {
-  const { signup, featured, profile } = getMessages(lang);
+  const { signup, featured } = getMessages(lang);
   const routes = getRoutes(lang);
   const params = useSearchParams();
   const [role, setRole] = useState(params.get("role") === "creator" ? "creator" : "brand");
-  const [state, formAction, pending] = useActionState(signUpAction, null);
 
   return (
     <div>
@@ -79,109 +153,27 @@ export default function SignupForm({ lang }) {
         </Link>
       </p>
 
-      <form action={formAction} className="rounded-card border border-line bg-card p-6 shadow-card sm:p-8">
-        <input type="hidden" name="lang" value={lang} />
-        <input type="hidden" name="role" value={role} />
-        <fieldset>
-          <legend className="text-sm font-semibold">{signup.roleLabel}</legend>
-          <div className="mt-3 grid gap-3 sm:grid-cols-2">
-            <RoleCard
-              active={role === "brand"}
-              onClick={() => setRole("brand")}
-              icon={<BuildingIcon />}
-              title={signup.roleBrand}
-              text={signup.roleBrandText}
-            />
-            <RoleCard
-              active={role === "creator"}
-              onClick={() => setRole("creator")}
-              icon={<VideoIcon />}
-              title={signup.roleCreator}
-              text={signup.roleCreatorText}
-            />
-          </div>
-        </fieldset>
-
-        <div className="mt-6 space-y-5">
-          <div className="grid gap-5 sm:grid-cols-2">
-            <label className="block">
-              <span className="text-sm font-semibold">{signup.firstName}</span>
-              <input name="firstName" type="text" required autoComplete="given-name" className={inputClass} />
-            </label>
-            <label className="block">
-              <span className="text-sm font-semibold">{signup.lastName}</span>
-              <input name="lastName" type="text" required autoComplete="family-name" className={inputClass} />
-            </label>
-          </div>
-          <label className="block">
-            <span className="text-sm font-semibold">{signup.email}</span>
-            <input name="email" type="email" required autoComplete="email" className={inputClass} />
-          </label>
-          <label className="block">
-            <span className="text-sm font-semibold">{signup.passwordLabel}</span>
-            <input name="password" type="password" required minLength={8} autoComplete="new-password" className={inputClass} />
-            <span className="mt-1 block text-sm text-ink-soft">{signup.passwordHint}</span>
-          </label>
-
-          {role === "brand" ? (
-            <label className="block">
-              <span className="text-sm font-semibold">{signup.company}</span>
-              <input name="companyName" type="text" required maxLength={60} className={inputClass} />
-            </label>
-          ) : (
-            <label className="block">
-              <span className="text-sm font-semibold">{signup.handle}</span>
-              <input name="handle" type="text" required placeholder={signup.handlePlaceholder} autoComplete="off" className={inputClass} />
-            </label>
-          )}
-          <div className={`grid gap-5 ${role === "creator" ? "sm:grid-cols-2" : ""}`}>
-            <label className="block">
-              <span className="text-sm font-semibold">{role === "brand" ? signup.industry : signup.niche}</span>
-              <select name="niche" required defaultValue="" className={inputClass}>
-                <option value="" disabled>{signup.nichePlaceholder}</option>
-                {NICHES.map((niche) => (
-                  <option key={niche} value={niche}>{featured.niches[niche]}</option>
-                ))}
-              </select>
-            </label>
-            {role === "creator" ? (
-              <label className="block">
-                <span className="text-sm font-semibold">{signup.city}</span>
-                <select name="city" required defaultValue="" className={inputClass}>
-                  <option value="" disabled>{signup.cityPlaceholder}</option>
-                  {CITIES.map((city) => (
-                    <option key={city} value={city}>{profile.cities[city]}</option>
-                  ))}
-                </select>
-              </label>
-            ) : null}
-          </div>
+      <fieldset>
+        <legend className="text-sm font-semibold">{signup.roleLabel}</legend>
+        <div className="mt-3 grid gap-3 sm:grid-cols-2">
+          <RoleCard
+            active={role === "brand"}
+            onClick={() => setRole("brand")}
+            icon={<BuildingIcon />}
+            title={signup.roleBrand}
+            text={signup.roleBrandText}
+          />
+          <RoleCard
+            active={role === "creator"}
+            onClick={() => setRole("creator")}
+            icon={<VideoIcon />}
+            title={signup.roleCreator}
+            text={signup.roleCreatorText}
+          />
         </div>
+      </fieldset>
 
-        <label className="mt-6 flex items-start gap-3">
-          <input name="terms" type="checkbox" required className="mt-1 h-5 w-5 shrink-0 accent-[#c2476c]" />
-          <span className="text-ink-soft">{signup.terms}</span>
-        </label>
-
-        <p className="mt-6 rounded-xl bg-soft p-4 text-sm text-ink-soft">
-          {role === "brand" ? signup.infoBrand : signup.infoCreator}
-        </p>
-
-        {state?.error ? (
-          <p role="alert" className="mt-6 rounded-xl border border-brand-light bg-brand-soft p-4 text-sm text-brand-dark">
-            {signup.errors[state.error] ?? signup.errors.generic}
-          </p>
-        ) : null}
-
-        <button
-          type="submit"
-          disabled={pending}
-          className="bg-brand-gradient disabled:opacity-60 mt-6 min-h-12 w-full rounded-full px-7 font-semibold text-white shadow-glow transition hover:brightness-110 active:translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-light"
-        >
-          {pending ? signup.submitting : signup.submit}
-        </button>
-        <p className="mt-4 text-center text-sm text-ink-soft">{signup.note}</p>
-      </form>
+      {role === "brand" ? <BrandForm lang={lang} signup={signup} featured={featured} /> : <div className="mt-6"><CreatorSignupWizard lang={lang} /></div>}
     </div>
   );
 }
