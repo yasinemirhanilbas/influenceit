@@ -584,9 +584,7 @@ const en = {
       categories: "Categories",
       categoriesHint: "Pick every category that fits your content. Selected: {count}",
       about: "About me",
-      aboutHint: "Introduce yourself and explain why followers and brands should choose you. Optional, up to {max} characters.",
-      aboutPlaceholder:
-        "Hi, I'm Deniz. I turn everyday recipes into short, honest videos that my 50K followers actually cook from. Brands choose me because my audience trusts my reviews, I always deliver on time, and every video is shot and edited by me. Write your own introduction here: who you are, what you create and why people should pick you.",
+      aboutPlaceholder: "Introduce yourself and explain why followers and brands should choose you. Optional, up to {max} characters.",
       passwordConfirm: "Repeat your password",
       photosTitle: "Photos",
       photosText: "Add a profile photo. You can also add up to 3 more photos of your work.",

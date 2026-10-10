@@ -411,10 +411,9 @@ export default function CreatorSignupWizard({ lang }) {
             name="about"
             rows={6}
             maxLength={ABOUT_MAX}
-            placeholder={copy.aboutPlaceholder}
+            placeholder={interpolate(copy.aboutPlaceholder, { max: ABOUT_MAX })}
             className={`${inputClass} min-h-36 py-3`}
           />
-          <span className="mt-1 block text-sm text-ink-soft">{interpolate(copy.aboutHint, { max: ABOUT_MAX })}</span>
         </label>
 
         <div className="grid gap-5 sm:grid-cols-2">

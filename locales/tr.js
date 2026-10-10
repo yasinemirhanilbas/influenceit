@@ -584,9 +584,7 @@ const tr = {
       categories: "Kategori Seçimi",
       categoriesHint: "İçeriğine uyan tüm kategorileri seçebilirsin. Seçili: {count}",
       about: "Hakkımda",
-      aboutHint: "Kendini tanıt ve takipçilerin ile markaların neden seni seçmesi gerektiğini anlat. İsteğe bağlı, en fazla {max} karakter.",
-      aboutPlaceholder:
-        "Merhaba, ben Deniz. Günlük yemek tariflerini kısa ve samimi videolara çeviriyorum; 50 bin takipçim tariflerimi gerçekten yapıyor. Markalar beni seçiyor çünkü kitlem yorumlarıma güveniyor, işleri her zaman zamanında teslim ediyorum ve her videoyu kendim çekip kurguluyorum. Burada kendi tanıtım yazını yaz: kimsin, ne üretiyorsun, insanlar neden seni seçmeli?",
+      aboutPlaceholder: "Kendini tanıt ve takipçilerin ile markaların neden seni seçmesi gerektiğini anlat. İsteğe bağlı, en fazla {max} karakter.",
       passwordConfirm: "Şifreni tekrar yaz",
       photosTitle: "Görseller",
       photosText: "Bir profil görseli ekle. İşlerinden en fazla 3 fotoğraf daha ekleyebilirsin.",
