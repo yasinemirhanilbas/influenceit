@@ -1,25 +1,31 @@
 @import "tailwindcss";
 
-/* Dark burgundy design tokens (names kept from the light theme: paper = page, ink = text) */
+/* Light "porcelain" theme: cool off-white surfaces, deep wine for actions, brass for trust marks.
+   Token names are kept from the first versions: paper = page, ink = text. */
 @theme {
-  --color-paper: #14070e;
-  --color-card: #231019;
-  --color-soft: #1b0b13;
+  --color-paper: #f4f2f3;
+  --color-card: #fcfbfb;
+  --color-soft: #ebe7e9;
 
-  --color-ink: #f7e9ee;
-  --color-ink-soft: #c8aab6;
-  --color-line: #3b1d2b;
+  --color-ink: #261b20;
+  --color-ink-soft: #625459;
+  --color-line: #ddd5d9;
+  --color-field: #9a8b92; /* borders of form fields (3:1 against the card) */
 
-  /* One color family: burgundy, lightened for text on dark */
-  --color-brand: #e9809f;
-  --color-brand-dark: #f4b4c8;
-  --color-brand-light: #c2476c;
-  --color-brand-soft: #3a1626;
-  --color-stamp: #f08cab;
+  /* One family: wine. brand = accent text, brand-dark = hover/strong text, brand-light = focus rings */
+  --color-brand: #8a2f4b;
+  --color-brand-dark: #6e2139;
+  --color-brand-light: #a03d5c;
+  --color-brand-soft: #efe1e6;
+  --color-action: #7a2742; /* solid fill of buttons and active chips */
 
-  --radius-card: 28px;
-  --shadow-card: 0 14px 40px rgba(0, 0, 0, 0.35);
-  --shadow-glow: 0 8px 24px rgba(194, 71, 108, 0.35);
+  /* Brass: stars, escrow stamps, fixed-price marks */
+  --color-brass: #8c6d2f;
+  --color-stamp: #8c6d2f;
+
+  --radius-card: 24px;
+  --shadow-card: 0 1px 2px rgba(38, 27, 32, 0.05), 0 10px 24px rgba(38, 27, 32, 0.06);
+  --shadow-glow: 0 2px 8px rgba(122, 39, 66, 0.22);
 }
 
 @theme inline {
@@ -29,7 +35,7 @@
 }
 
 :root {
-  color-scheme: dark;
+  color-scheme: light;
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -39,43 +45,26 @@ body {
   font-family: var(--font-sans);
 }
 
-/* Burgundy gradient helpers */
+/* Solid wine fills (class names kept from the gradient version, so components did not change) */
 .bg-brand-gradient {
-  background-image: linear-gradient(90deg, #8e2748, #c2476c);
+  background-color: var(--color-action);
 }
 
 .bg-brand-gradient-deep {
-  background-image: linear-gradient(135deg, #6a1633, #b0365b);
+  background-color: #5f1d34;
 }
 
 .text-gradient {
-  background-image: linear-gradient(90deg, #f7c3d3, #e9809f);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  -webkit-box-decoration-break: clone;
-  box-decoration-break: clone;
+  color: var(--color-brand);
 }
 
-@media (forced-colors: active) {
-  .text-gradient {
-    background: none;
-    color: CanvasText;
-  }
-}
-
-/* Soft burgundy light spots behind the hero */
+/* Very faint wine tint behind hero areas */
 .hero-glow {
-  background-image:
-    radial-gradient(55% 55% at 12% 4%, rgba(194, 71, 108, 0.28), transparent 62%),
-    radial-gradient(45% 50% at 95% 40%, rgba(122, 31, 61, 0.45), transparent 62%);
+  background-image: radial-gradient(60% 55% at 10% 0%, rgba(122, 39, 66, 0.07), transparent 65%);
 }
 
-/* Burgundy glow inside the closing section */
 .cta-glow {
-  background-image:
-    radial-gradient(50% 70% at 90% 0%, rgba(194, 71, 108, 0.3), transparent 65%),
-    radial-gradient(45% 60% at 5% 100%, rgba(122, 31, 61, 0.5), transparent 65%);
+  background-image: radial-gradient(55% 60% at 92% 0%, rgba(122, 39, 66, 0.06), transparent 65%);
 }
 
 /* Small spaced mono label, used for eyebrows and navigation */

@@ -6,12 +6,13 @@ import { useSearchParams } from "next/navigation";
 import { getMessages, interpolate } from "@/locales";
 import { signUpAction } from "@/app/[lang]/auth/actions";
 import CreatorSignupWizard from "@/components/CreatorSignupWizard";
+import TermsText from "@/components/TermsText";
 import PhoneField from "@/components/PhoneField";
 import { BRAND_SECTORS } from "@/lib/options";
 import { getRoutes } from "@/lib/routes";
 
 const inputClass =
-  "mt-2 min-h-12 w-full rounded-xl border border-line bg-paper px-4 text-base text-ink placeholder:text-ink-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-light";
+  "mt-2 min-h-12 w-full rounded-xl border border-field bg-paper px-4 text-base text-ink placeholder:text-ink-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-light";
 
 function BuildingIcon() {
   return (
@@ -119,8 +120,10 @@ function BrandForm({ lang, signup, featured }) {
       </div>
 
       <label className="mt-6 flex items-start gap-3">
-        <input name="terms" type="checkbox" required className="mt-1 h-5 w-5 shrink-0 accent-[#c2476c]" />
-        <span className="text-ink-soft">{signup.terms}</span>
+        <input name="terms" type="checkbox" required className="mt-1 h-5 w-5 shrink-0 accent-[#7a2742]" />
+        <span className="text-ink-soft">
+          <TermsText lang={lang} />
+        </span>
       </label>
 
       <p className="mt-6 rounded-xl bg-soft p-4 text-sm text-ink-soft">{signup.infoBrand}</p>

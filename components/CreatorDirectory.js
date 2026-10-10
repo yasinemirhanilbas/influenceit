@@ -38,7 +38,7 @@ export default function CreatorDirectory({ creators, lang }) {
           value={query}
           onChange={(event) => setQuery(event.target.value)}
           placeholder={copy.searchPlaceholder}
-          className="mt-2 min-h-12 w-full rounded-full border border-line bg-card px-5 text-base text-ink placeholder:text-ink-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-light"
+          className="mt-2 min-h-12 w-full rounded-full border border-field bg-card px-5 text-base text-ink placeholder:text-ink-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-light"
         />
       </label>
 

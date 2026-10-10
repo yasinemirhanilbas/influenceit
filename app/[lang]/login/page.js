@@ -1,6 +1,8 @@
+import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import LoginPanels from "@/components/LoginPanels";
 import PageHeader from "@/components/PageHeader";
+import RedirectIfSignedIn from "@/components/RedirectIfSignedIn";
 import { getMessages, isLocale } from "@/locales";
 
 export async function generateMetadata({ params }) {
@@ -18,6 +20,9 @@ export default async function LoginPage({ params }) {
   return (
     <>
       <PageHeader eyebrow={copy.eyebrow} title={copy.heading} subtitle={copy.subheading} />
+      <Suspense fallback={null}>
+        <RedirectIfSignedIn lang={lang} />
+      </Suspense>
       <section className="mx-auto max-w-4xl px-5 py-12 sm:py-16">
         <LoginPanels lang={lang} />
       </section>

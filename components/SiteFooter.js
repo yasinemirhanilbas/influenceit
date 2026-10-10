@@ -53,7 +53,15 @@ export default function SiteFooter({ lang }) {
         </div>
       </div>
       <div className="border-t border-line px-5 py-5 text-center text-xs text-ink-soft">
-        {footer.note}
+        <p>{footer.note}</p>
+        <p className="mt-2 flex justify-center gap-4">
+          <Link href={routes.terms} className="underline underline-offset-4 hover:text-ink focus-visible:outline-2 focus-visible:outline-brand-light">
+            {footer.terms}
+          </Link>
+          <Link href={routes.privacy} className="underline underline-offset-4 hover:text-ink focus-visible:outline-2 focus-visible:outline-brand-light">
+            {footer.privacy}
+          </Link>
+        </p>
       </div>
     </footer>
   );

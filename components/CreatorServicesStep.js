@@ -11,7 +11,7 @@ import {
 // the form); this component only draws it and edits it through setPackages. Every price is typed in by the creator.
 
 const fieldClass =
-  "min-h-12 w-full rounded-xl border border-line bg-card px-4 text-base text-ink placeholder:text-ink-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-light";
+  "min-h-12 w-full rounded-xl border border-field bg-paper px-4 text-base text-ink placeholder:text-ink-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-light";
 const buttonFocus = "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-light";
 const digitsOnly = (value) => value.replace(/\D/g, "");
 

@@ -56,7 +56,7 @@ export default function CreatorCard({ creator, lang, duplicate = false }) {
           className="flex items-center gap-1.5 font-semibold text-ink"
           aria-label={interpolate(featured.ratingLabel, { rating })}
         >
-          <StarIcon className="h-4 w-4 text-brand-light" />
+          <StarIcon className="h-4 w-4 text-brass" />
           {rating}
           <span className="font-normal text-ink-soft">
             ({interpolate(featured.orders, { count: creator.completedOrders })})

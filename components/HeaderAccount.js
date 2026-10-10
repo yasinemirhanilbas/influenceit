@@ -1,4 +1,5 @@
 import Button from "./Button";
+import LogOutButton from "./LogOutButton";
 import MobileNav from "./MobileNav";
 import { getRoutes } from "@/lib/routes";
 import { getSessionUser } from "@/lib/session";
@@ -33,15 +34,16 @@ export default async function HeaderAccount({ lang }) {
   return (
     <>
       {user ? (
-        <span className="hidden sm:inline-flex">
+        <span className="hidden items-center gap-2 sm:inline-flex">
           <Button href={routes.account} size="sm" arrow={false}>
             {header.account}
           </Button>
+          <LogOutButton lang={lang} />
         </span>
       ) : (
         <GuestButtons lang={lang} />
       )}
-      <MobileNav lang={lang} signedIn={Boolean(user)} />
+      <MobileNav lang={lang} signedIn={Boolean(user)} logOut={user ? <LogOutButton lang={lang} size="md" className="mt-2" /> : null} />
     </>
   );
 }

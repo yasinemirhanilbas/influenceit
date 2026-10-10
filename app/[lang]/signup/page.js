@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import PageHeader from "@/components/PageHeader";
+import RedirectIfSignedIn from "@/components/RedirectIfSignedIn";
 import SignupForm from "@/components/SignupForm";
 import { getMessages, isLocale } from "@/locales";
 
@@ -18,6 +19,9 @@ export default async function SignupPage({ params }) {
   return (
     <>
       <PageHeader eyebrow={signup.eyebrow} title={signup.heading} subtitle={signup.subheading} />
+      <Suspense fallback={null}>
+        <RedirectIfSignedIn lang={lang} />
+      </Suspense>
       <section className="mx-auto max-w-xl px-5 py-12 sm:py-16">
         {/* useSearchParams needs a Suspense boundary */}
         <Suspense fallback={null}>

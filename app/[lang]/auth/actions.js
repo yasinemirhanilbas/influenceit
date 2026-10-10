@@ -18,12 +18,12 @@ import { getMessages, interpolate as interpolateText, isLocale } from "@/locales
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const AVATAR_SHAPES = ["circle", "arch", "square"];
 const AVATAR_COLORS = [
-  ["#F4C2D0", "#22111A"],
-  ["#E9809F", "#22111A"],
-  ["#B0365B", "#FFFFFF"],
-  ["#D9A5B8", "#22111A"],
-  ["#F8E1E8", "#5A1229"],
-  ["#8E2748", "#FFFFFF"],
+  ["#D9C4CB", "#2A1F24"],
+  ["#D4CBB8", "#2A1F24"],
+  ["#C7CDD3", "#2A1F24"],
+  ["#CDB6BD", "#2A1F24"],
+  ["#C9D1C8", "#2A1F24"],
+  ["#E2D6DA", "#2A1F24"],
 ];
 
 const text = (formData, key) => String(formData.get(key) ?? "").trim();

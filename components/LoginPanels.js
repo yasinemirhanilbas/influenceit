@@ -7,7 +7,7 @@ import { logInAction } from "@/app/[lang]/auth/actions";
 import { getRoutes } from "@/lib/routes";
 
 const inputClass =
-  "mt-2 min-h-12 w-full rounded-xl border border-line bg-paper px-4 text-base text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-light";
+  "mt-2 min-h-12 w-full rounded-xl border border-field bg-paper px-4 text-base text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-light";
 
 // One login form for everyone. The account itself decides whether it is
 // a brand or a creator account, so there is no account-type choice here.

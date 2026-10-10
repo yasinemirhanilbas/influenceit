@@ -36,7 +36,7 @@ export default function BriefCard({ brief, lang }) {
         </div>
       </dl>
 
-      <Button href={routes.signUpCreator} size="sm" variant="secondary" className="mt-4 w-full">
+      <Button href={routes.job(brief.id)} size="sm" variant="secondary" className="mt-4 w-full">
         {jobs.apply}
       </Button>
     </article>

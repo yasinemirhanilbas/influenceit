@@ -1,4 +1,4 @@
-// Fictional sample figures. kind decides how the value is formatted with Intl.
+// Fictional sample figures (openJobs is replaced by the real count from the database). kind decides how the value is formatted with Intl.
 export const stats = [
   { id: "openJobs", value: 38, kind: "number" },
   { id: "approvalRate", value: 0.96, kind: "percent" },

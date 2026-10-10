@@ -8,7 +8,7 @@ import { DEFAULT_PHONE_CODE, PHONE_CODES, limitPhoneInput, phoneRule } from "@/l
 // Typing is limited to digits and to the country's maximum length (see lib/phone.js).
 // copy: { label, hint, code, digits } (digits has a {count} placeholder).
 const base =
-  "min-h-12 rounded-xl border border-line bg-paper px-4 text-base text-ink placeholder:text-ink-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-light";
+  "min-h-12 rounded-xl border border-field bg-paper px-4 text-base text-ink placeholder:text-ink-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-light";
 
 export default function PhoneField({ copy }) {
   const [code, setCode] = useState(DEFAULT_PHONE_CODE);

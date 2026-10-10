@@ -2,6 +2,7 @@ import SectionHeading from "./SectionHeading";
 import { getMessages } from "@/locales";
 import { stats } from "@/data/stats";
 import { getIntlLocale } from "@/locales";
+import { getOpenJobCount } from "@/lib/queries";
 import { formatCompactNumber, formatNumber, formatPercent } from "@/lib/format";
 
 function formatStat({ value, kind }, locale) {
@@ -10,7 +11,8 @@ function formatStat({ value, kind }, locale) {
   return formatNumber(value, locale);
 }
 
-export default function StatsSection({ lang }) {
+export default async function StatsSection({ lang }) {
+  const openJobs = await getOpenJobCount();
   const messages = getMessages(lang);
   const { stats: copy } = messages;
 
@@ -20,7 +22,9 @@ export default function StatsSection({ lang }) {
         <SectionHeading id="stats-heading" eyebrow={copy.eyebrow} title={copy.heading} />
 
         <dl className="mt-10 grid grid-cols-2 overflow-hidden rounded-card border border-line bg-card shadow-card lg:grid-cols-4">
-          {stats.map((stat, index) => (
+          {stats.map((item, index) => {
+            const stat = item.id === "openJobs" ? { ...item, value: openJobs } : item;
+            return (
             <div
               key={stat.id}
               className={`p-6 sm:p-8 ${index % 2 === 0 ? "border-r border-dashed border-line" : ""} ${index < 2 ? "border-b border-dashed border-line lg:border-b-0" : ""} ${index === 1 ? "lg:border-r lg:border-dashed" : ""} ${index === 2 ? "lg:border-r lg:border-dashed" : ""}`}
@@ -30,7 +34,8 @@ export default function StatsSection({ lang }) {
               </dd>
               <dt className="mt-3 text-sm text-ink-soft">{copy.items[stat.id]}</dt>
             </div>
-          ))}
+            );
+          })}
         </dl>
 
         <p className="mt-4 text-sm text-ink-soft">{copy.note}</p>

@@ -8,7 +8,8 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { getNavLinks, getRoutes } from "@/lib/routes";
 
-export default function MobileNav({ lang, signedIn = false }) {
+// `logOut` is a ready-made log-out button (a server component passed in from the header).
+export default function MobileNav({ lang, signedIn = false, logOut = null }) {
   const messages = getMessages(lang);
   const routes = getRoutes(lang);
   const { header, common } = messages;
@@ -51,9 +52,12 @@ export default function MobileNav({ lang, signedIn = false }) {
           </ul>
           <div className="mt-2 border-t border-dashed border-line p-2 pt-4">
             {signedIn ? (
-              <Button href={routes.account} className="w-full">
-                {header.account}
-              </Button>
+              <>
+                <Button href={routes.account} className="w-full">
+                  {header.account}
+                </Button>
+                {logOut}
+              </>
             ) : (
               <>
                 <Button href={routes.signUpBrand} className="w-full">

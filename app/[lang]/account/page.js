@@ -1,10 +1,12 @@
 import { Suspense } from "react";
 import { notFound, redirect } from "next/navigation";
 import Avatar from "@/components/Avatar";
+import { BrandJobs, CreatorApplications } from "@/components/AccountJobs";
 import Button from "@/components/Button";
 import PageHeader from "@/components/PageHeader";
 import { db } from "@/lib/db";
 import { imageUrl, splitList } from "@/lib/images";
+import { suggestCreators } from "@/lib/matching";
 import { getRoutes } from "@/lib/routes";
 import { getSessionUser } from "@/lib/session";
 import { logOutAction } from "@/app/[lang]/auth/actions";
@@ -37,12 +39,44 @@ async function AccountContent({ lang }) {
   const creator = user.creatorProfile;
   const rows = [{ label: account.emailLabel, value: user.email }];
   let hasPackages = true;
+  let myJobs = [];
+  let myApplications = [];
+  let suggestions = {};
 
   if (isBrand) {
-    const [jobs, orders] = await Promise.all([
+    const [jobs, orders, ownJobs] = await Promise.all([
       db.job.count({ where: { brandId: user.brandProfile.id, status: "OPEN" } }),
       db.order.count({ where: { brandId: user.brandProfile.id } }),
+      db.job.findMany({
+        where: { brandId: user.brandProfile.id },
+        include: { applications: { include: { creator: { include: { user: true } } }, orderBy: { id: "desc" } } },
+        orderBy: { createdAt: "desc" },
+      }),
     ]);
+    myJobs = ownJobs;
+
+    // Suggested creators for each open job (see lib/matching.js). Creators who already applied are left out.
+    const openJobs = ownJobs.filter((job) => job.status === "OPEN");
+    if (openJobs.length > 0) {
+      const rows = await db.creatorProfile.findMany({ where: { packages: { some: {} } }, include: { user: true, packages: true } });
+      const pool = rows.map((row) => {
+        const cheapest = row.packages.reduce((min, pkg) => (pkg.priceAmount < min.priceAmount ? pkg : min), row.packages[0]);
+        return {
+          id: row.id,
+          slug: row.slug,
+          name: row.user.name,
+          avatar: { shape: row.avatarShape, bg: row.avatarBg, fg: row.avatarFg, image: imageUrl(row.profileImage) },
+          niches: [...new Set([row.niche, ...splitList(row.categories)])],
+          rating: row.rating,
+          completedOrders: row.completedOrders,
+          cheapestPrice: { amount: cheapest.priceAmount, currency: cheapest.priceCurrency },
+          fastestDays: Math.min(...row.packages.map((pkg) => pkg.deliveryDays)),
+        };
+      });
+      for (const job of openJobs) {
+        suggestions[job.id] = suggestCreators(job, pool, { excludeIds: job.applications.map((application) => application.creatorId) });
+      }
+    }
     rows.push(
       { label: account.companyLabel, value: user.brandProfile.companyName },
       { label: account.companyTitleLabel, value: user.brandProfile.companyTitle ?? "-" },
@@ -52,11 +86,17 @@ async function AccountContent({ lang }) {
       { label: account.ordersLabel, value: String(orders) },
     );
   } else if (creator) {
-    const [applications, orders, packages] = await Promise.all([
+    const [applications, orders, packages, sent] = await Promise.all([
       db.application.count({ where: { creatorId: creator.id } }),
       db.order.count({ where: { creatorId: creator.id } }),
       db.package.count({ where: { creatorId: creator.id } }),
+      db.application.findMany({
+        where: { creatorId: creator.id },
+        include: { job: { include: { brand: true } } },
+        orderBy: { id: "desc" },
+      }),
     ]);
+    myApplications = sent;
     hasPackages = packages > 0;
     rows.push(
       { label: account.handleLabel, value: creator.handle },
@@ -106,6 +146,9 @@ async function AccountContent({ lang }) {
         ))}
       </dl>
 
+      {isBrand ? <BrandJobs jobs={myJobs} suggestions={suggestions} lang={lang} /> : null}
+      {creator ? <CreatorApplications applications={myApplications} lang={lang} /> : null}
+
       {creator && !hasPackages ? (
         <p className="mt-6 rounded-xl bg-soft p-4 text-sm text-ink-soft">{account.creatorNoPackages}</p>
       ) : null}
@@ -114,8 +157,18 @@ async function AccountContent({ lang }) {
         {isBrand ? (
           <Button href={routes.creators}>{account.findCreators}</Button>
         ) : (
-          <Button href={routes.jobs}>{account.browseJobs}</Button>
+          <>
+            <Button href={routes.packages} variant={hasPackages ? "secondary" : "primary"}>
+              {account.managePackages}
+            </Button>
+            <Button href={routes.jobs} variant="secondary">
+              {account.browseJobs}
+            </Button>
+          </>
         )}
+        <Button href={routes.orders} variant="secondary" arrow={false}>
+          {account.myOrders}
+        </Button>
         {creator && hasPackages ? (
           <Button href={routes.creatorProfile(creator.slug)} variant="secondary" arrow={false}>
             {account.viewProfile}

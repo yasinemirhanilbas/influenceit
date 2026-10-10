@@ -31,7 +31,7 @@ export default async function CreatorProfilePage({ params }) {
   if (!creator) notFound();
 
   const messages = getMessages(lang);
-  const { profile, common, featured } = messages;
+  const { profile, common, featured, signup, packages: packagesCopy } = messages;
   const routes = getRoutes(lang);
   const intl = getIntlLocale(lang);
 
@@ -86,7 +86,7 @@ export default async function CreatorProfilePage({ params }) {
             <div key={stat.label} className="rounded-card border border-line bg-card p-5 shadow-card">
               <dt className="label-mono text-xs text-ink-soft">{stat.label}</dt>
               <dd className="mt-2 flex items-center gap-1.5 font-display text-2xl font-semibold">
-                {stat.star ? <StarIcon className="h-5 w-5 text-brand-light" /> : null}
+                {stat.star ? <StarIcon className="h-5 w-5 text-brass" /> : null}
                 {stat.value}
               </dd>
             </div>
@@ -97,6 +97,23 @@ export default async function CreatorProfilePage({ params }) {
           <h2 className="font-display text-2xl font-semibold">{profile.aboutHeading}</h2>
           <p className="mt-3 text-lg leading-relaxed text-ink-soft">{creator.bio}</p>
         </div>
+
+        {creator.socials.length > 0 ? (
+          <div className="mt-12">
+            <h2 className="font-display text-2xl font-semibold">{profile.socialHeading}</h2>
+            <ul className="mt-6 grid max-w-3xl gap-3 sm:grid-cols-2">
+              {creator.socials.map((account) => (
+                <li key={account.platform} className="rounded-card border border-line bg-card p-4 shadow-card">
+                  <p className="label-mono text-xs text-ink-soft">{signup.creator.platforms[account.platform] ?? account.platform}</p>
+                  <p className="mt-1 font-semibold">@{account.username}</p>
+                  <p className="text-sm text-ink-soft">
+                    {interpolate(common.followers, { count: formatCompactNumber(account.followers, intl) })}
+                  </p>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ) : null}
 
         {creator.gallery.length > 0 ? (
           <div className="mt-12">
@@ -132,7 +149,11 @@ export default async function CreatorProfilePage({ params }) {
                   <p className="mt-1 text-sm text-ink-soft">
                     {interpolate(profile.packageDelivery, { days: pkg.deliveryDays })}
                   </p>
-                  <Button href={routes.signUpBrand} size="sm" className="mt-5 w-full">
+                  <p className="text-sm text-ink-soft">
+                    {interpolate(packagesCopy.revisionsValue, { count: pkg.revisions })}
+                    {pkg.stay ? ` · ${packagesCopy.stayValue} ${packagesCopy.stays[pkg.stay]}` : ""}
+                  </p>
+                  <Button href={routes.newOrder(pkg.id)} size="sm" className="mt-5 w-full">
                     {profile.order}
                   </Button>
                 </article>

@@ -4,6 +4,7 @@ import { startTransition, useActionState, useEffect, useId, useRef, useState } f
 import { getMessages, interpolate } from "@/locales";
 import { normalizePhone } from "@/lib/phone";
 import PhoneField from "@/components/PhoneField";
+import TermsText from "@/components/TermsText";
 import { creatorSignUpAction } from "@/app/[lang]/auth/actions";
 import CreatorServicesStep from "@/components/CreatorServicesStep";
 import { normalizePackages } from "@/lib/services";
@@ -19,7 +20,7 @@ const ERROR_STEP = { profileImage: 2, imageType: 2, imageSize: 2, platforms: 3, 
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const inputClass =
-  "mt-2 min-h-12 w-full rounded-xl border border-line bg-paper px-4 text-base text-ink placeholder:text-ink-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-light";
+  "mt-2 min-h-12 w-full rounded-xl border border-field bg-paper px-4 text-base text-ink placeholder:text-ink-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-light";
 const buttonFocus = "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-light";
 
 
@@ -392,8 +393,10 @@ export default function CreatorSignupWizard({ lang }) {
           </label>
         </div>
         <label className="flex items-start gap-3">
-          <input name="terms" type="checkbox" className="mt-1 h-5 w-5 shrink-0 accent-[#c2476c]" />
-          <span className="text-ink-soft">{signup.terms}</span>
+          <input name="terms" type="checkbox" className="mt-1 h-5 w-5 shrink-0 accent-[#7a2742]" />
+          <span className="text-ink-soft">
+            <TermsText lang={lang} />
+          </span>
         </label>
       </section>
 
