@@ -8,6 +8,8 @@ A two-sided marketplace prototype for Turkey where **brands find creators** and 
 - Creator directory with search and niche filters, and a public profile page per creator (stats, photos, social accounts, price packages).
 - Sign-up for brands (short form) and creators (4-step wizard: basic info, photos, social media, services and prices) and real login with a signed cookie.
 - Jobs: brands post jobs, creators apply with a message, brands choose or decline applicants and can close or reopen a job. Each open job shows suggested creators with the reasons for the match (niche, budget, delivery time, rating).
+- Orders with a status machine (waiting for payment, paid in escrow, delivered, revision, approved), mock payment and video delivery.
+- Creators manage their own packages (price, delivery time, revisions, stay on profile).
 - Account page for both roles, terms and privacy pages.
 
 ## Run it
@@ -30,6 +32,31 @@ Demo accounts (password `demo1234`):
 | Brand | `northloom-coffee@example.com` |
 
 Every seed creator uses `<slug>@example.com` and every seed brand uses its slugified name, for example `marlow-finch@example.com`.
+
+## Demo script (3-5 minutes)
+
+Start clean: `npm run reset`, then `npm run dev`. Use two browser windows (or one normal and one private window).
+
+1. **Brand** (`northloom-coffee@example.com`): open *My account*. Show the open job and the suggested creators with the reasons for each match.
+2. **Brand**: click *Post a job*, fill the form, submit. The job appears in the public list.
+3. **Creator** (`mira-solis@example.com`, other window): open the job, send an application with a short message. Show *My account* with the status "Waiting".
+4. **Brand**: in *My account*, open the applications of the job and click *Choose creator*. The job closes, the creator sees "Chosen".
+5. **Brand**: open the creator profile, pick a package, place the order (status "Waiting for payment"), then fill the mock payment form with any numbers and pay: "Paid, in escrow".
+6. **Creator**: open the order and deliver it with a short video and a note.
+7. **Brand**: ask for a revision once, **creator** delivers again, **brand** approves. The status bar reaches "Approved" and the escrow is shown as released.
+8. **Creator**: open *My packages* and edit a package. The public profile shows the change.
+
+Invalid steps are refused on the server (for example approving an unpaid order, or a creator choosing applicants).
+
+## Why these choices (one sentence each)
+
+- **Next.js:** pages and server code in one project, so a small team ships a full flow fast.
+- **SQLite + Prisma:** zero setup, a real relational model, and `npm run reset` gives the same clean demo every time.
+- **Order status machine:** every change goes through one list of allowed transitions, so a wrong click cannot skip payment or approval.
+- **Simulated escrow:** real escrow needs a licensed provider; the demo shows the state changes that a provider would drive.
+- **Server-side checks:** roles and ownership are verified in every server action, never only in the interface.
+- **Locale files:** all UI text lives in `locales/`, so a new language is one new file.
+- **Explainable suggestions:** the matching score is simple on purpose and shows why a creator was suggested.
 
 ## Tech stack and why
 
@@ -56,8 +83,7 @@ Every seed creator uses `<slug>@example.com` and every seed brand uses its slugi
 
 ## Next steps
 
-- Order flow with mock payment, delivery and approval (written on a separate branch, to be merged).
-- Package editor for creators.
+- Dark theme (designed, not built).
 - Verified metrics through platform OAuth.
 - A search service for larger creator lists.
 

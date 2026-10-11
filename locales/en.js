@@ -876,6 +876,7 @@ const en = {
     loading: "Loading your packages...",
     revisionsLabel: "Included revisions",
     revisionsValue: "{count} revisions",
+    revisionsValueOne: "{count} revision",
     stayLabel: "Time online",
     stayValue: "Online for",
     stays: { "": "Not specified", "24h": "24 hours", "7d": "7 days", "30d": "30 days", permanent: "Permanent" },
@@ -975,6 +976,13 @@ const en = {
     myOrders: "My orders",
     logOut: "Log out",
     loading: "Loading your account...",
+  },
+
+  errorPage: {
+    heading: "Something went wrong",
+    text: "An unexpected error happened. Please try again, or go back to the home page.",
+    retry: "Try again",
+    home: "Back to home",
   },
 
   notFound: {

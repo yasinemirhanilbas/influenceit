@@ -51,10 +51,10 @@ Phase 1 in progress: multi-page bilingual site (home, creators, jobs, how-it-wor
 ## Backlog / ideas
 (not approved yet)
 - Dark theme option "Wine and brass" (parked): paper #171114, card #261d22, ink #ece4e6, ink-soft #b3a5ab, line #3d3138, brand #d9a0ae, button #98314f, brass #c9a96e, no gradients, faint glows.
-- Packages made at sign-up (`Package.platform/contents/revisions/stay`) have no editor yet; `feature/creator-packages` (package management page) only knows name, description, price and delivery days, so merge it carefully. The order flow still orders a package by id and ignores the new columns. A "UGC" tab (as on the reference site) is not built.
-- Show each creator's social accounts (platform, username, followers) on the profile page; the data is in `SocialAccount`.
+- Package editor does not edit `platform` and `contents` (set at sign-up). A "UGC" tab (as on the reference site) is not built.
+- Idea: after choosing an applicant, offer a button "Order from this creator" that opens the order form for one of their packages.
+- Idea: a simpler "start from scratch" demo seed (no half-finished orders) and a one-page interview summary ("how I would grow it").
+- Idea: record a short screen video of the demo script as a backup (to be done by the user).
 - Follower counts are typed in by the creator and not verified; automatic lookup was discussed and dropped (no public API for most platforms).
-- Terms of Use and Privacy Policy links in the sign-up text point nowhere (pages do not exist yet); logged-in users can still open /signup.
-- `signup.handle` and `signup.handlePlaceholder` in `locales/` are now unused (the handle comes from the first social account); delete them.
 
 Detailed history of approved changes goes in CHANGELOG.md (date, what, files, why).

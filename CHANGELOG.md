@@ -2,6 +2,14 @@
 
 Approved changes, newest first. Format: date, what, files, why.
 
+## 2026-10-11 (polish: mobile check, error page, demo script)
+- Checked 14 pages at 390px width (home, creators, profile, jobs, job, new job, account for both roles, packages, orders, how it works, sign-up, 404): no sideways overflow.
+- Fixed "1 revisions" to "1 revision" on the profile and in the package manager (`revisionsValueOne`).
+- New error page `app/[lang]/error.js` (retry button and link home, English and Turkish, `errorPage` in `locales/`).
+- README: demo script (3-5 minutes), one-sentence reasons for each technical choice, updated "What works" and "Next steps".
+- `CLAUDE.md` backlog cleaned (finished items removed); `ROADMAP.md` phases 1-4 ticked.
+- Files: `app/[lang]/error.js`, `components/PackagesManager.js`, `app/[lang]/creators/[slug]/page.js`, `locales/en.js`, `locales/tr.js`, `README.md`, `ROADMAP.md`, `CLAUDE.md`, `CHANGELOG.md`.
+
 ## 2026-10-10 (order flow, package editing, suggestions, legal pages, README)
 - Order flow (Phase 3), integrated by hand from the friend's branch `feature/order-flow`: ordering a package (`/{lang}/orders/new`), order page and list (`/{lang}/orders`, `/{lang}/orders/[id]`) with simulated escrow statuses, delivery by video upload (stored in `storage/uploads/`, served through `app/api/orders/[id]/video/route.js`, access only for the two parties), revision requests and approval. Server actions in `app/[lang]/orders/actions.js`; helpers `lib/orders.js`, `lib/orderStatus.js`, `lib/storage.js`; `next.config.mjs` sets `serverActions.bodySizeLimit` to 55mb. Schema (approved): `Order.packageName`, `deliveryNote`, `revisionNote`, `deliveryVideo`. `npm run reset` is needed; reset does not clear uploaded videos.
 - Package editing, integrated from `feature/creator-packages` and extended: creators add, edit and delete packages at `/{lang}/account/packages` (max 8, name 40, description 160, price up to 1,000,000, delivery up to 30 days, plus revisions 0-5 and stay-on-profile options). Packages with orders cannot be deleted. Brands cannot open or save. Files: `app/[lang]/account/packages/{page,actions}.js`, `components/PackagesManager.js`, `lib/options.js` (`PACKAGE_LIMITS`), `lib/routes.js`, profile page shows revisions and stay. Note: right after an edit the first profile visit can still show the old copy (Next.js revalidates in the background); the next visit is fresh.

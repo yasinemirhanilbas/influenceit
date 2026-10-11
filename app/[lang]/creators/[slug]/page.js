@@ -150,7 +150,7 @@ export default async function CreatorProfilePage({ params }) {
                     {interpolate(profile.packageDelivery, { days: pkg.deliveryDays })}
                   </p>
                   <p className="text-sm text-ink-soft">
-                    {interpolate(packagesCopy.revisionsValue, { count: pkg.revisions })}
+                    {interpolate(pkg.revisions === 1 ? packagesCopy.revisionsValueOne : packagesCopy.revisionsValue, { count: pkg.revisions })}
                     {pkg.stay ? ` · ${packagesCopy.stayValue} ${packagesCopy.stays[pkg.stay]}` : ""}
                   </p>
                   <Button href={routes.newOrder(pkg.id)} size="sm" className="mt-5 w-full">

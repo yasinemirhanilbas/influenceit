@@ -25,40 +25,40 @@ Influencer ve markaları buluşturan bir pazaryeri prototipi. Amaç: ölçeklene
 - [ ] GitHub reposu açık, arkadaş davet edildi (kabul bekleniyor)
 - [ ] Node.js ve Git kurulu olduğunu doğrula (`node -v`, `git -v`)
 - [x] Git kuralı (güncellendi 2026-10-10): doğrudan `main` üzerinde çalışılır, her push'tan önce Fetch + Pull; büyük riskli işler için isteğe bağlı kısa dal
-- [ ] `.gitignore` içinde `node_modules/`, `.env`, `*.db` olduğundan emin ol
+- [x] `.gitignore` içinde `node_modules/`, `.env`, `*.db` olduğundan emin ol
 - [ ] İş bölümü: kim hangi sayfayı yapıyor (çakışmayı önler)
 
 **Çıktı:** Boş ama düzenli bir repo ve ortak çalışma kuralları.
 
 ## Faz 1 — İskelet ve veri (1 gün)
 
-- [ ] Next.js projesini kur, Tailwind ekle
-- [ ] Prisma şeması: `User`, `CreatorProfile`, `BrandProfile`, `Package` (fiyat paketi), `Order`
-- [ ] Seed script: 20-30 uydurma creator, 5-6 marka (uydurma isim, rastgele avatar; gerçek kişi kullanma)
-- [ ] `npm run reset` komutu: veritabanını sıfırlar ve yeniden doldurur
-- [ ] Ortak sayfa düzeni: üst menü, Marka/Creator geçişi
+- [x] Next.js projesini kur, Tailwind ekle
+- [x] Prisma şeması: `User`, `CreatorProfile`, `BrandProfile`, `Package` (fiyat paketi), `Order`
+- [x] Seed script: 20-30 uydurma creator, 5-6 marka (uydurma isim, rastgele avatar; gerçek kişi kullanma)
+- [x] `npm run reset` komutu: veritabanını sıfırlar ve yeniden doldurur
+- [x] Ortak sayfa düzeni: üst menü, Marka/Creator geçişi
 
 **Çıktı:** Uygulama açılıyor, veritabanı seed veriyle dolu.
 
 ## Faz 2 — Creator keşfi (1 gün)
 
-- [ ] Creator arama sayfası: kart görünümü
-- [ ] Filtreler: niş, fiyat aralığı, takipçi aralığı, şehir
-- [ ] Sıralama ve sayfalama
-- [ ] Creator profil sayfası: bio, istatistikler, fiyat paketleri, örnek içerik görselleri
-- [ ] Boş durum ve yükleniyor ekranları
+- [x] Creator arama sayfası: kart görünümü
+- [x] Filtreler: niş, fiyat aralığı, takipçi aralığı, şehir
+- [x] Sıralama ve sayfalama
+- [x] Creator profil sayfası: bio, istatistikler, fiyat paketleri, örnek içerik görselleri
+- [x] Boş durum ve yükleniyor ekranları
 
 **Çıktı:** Marka olarak creator bulup profilini inceleyebiliyorsun.
 
 ## Faz 3 — Sipariş akışı (1-2 gün) ← projenin kalbi
 
-- [ ] "Sipariş ver" formu (paket seçimi, kısa brief)
-- [ ] Sahte ödeme ekranı → durum "ödendi (escrow'da)"
-- [ ] Sipariş durum makinesi: `beklemede → ödendi → teslim edildi → revizyon | onaylandı`
-- [ ] Geçersiz durum geçişlerini engelle (ör. ödenmemiş siparişi onaylayamazsın)
-- [ ] Marka paneli: siparişlerim, onayla / revizyon iste
-- [ ] Creator paneli: gelen siparişler, teslim et (dosya/link yükle)
-- [ ] Durum çubuğu ile görsel ilerleme gösterimi
+- [x] "Sipariş ver" formu (paket seçimi, kısa brief)
+- [x] Sahte ödeme ekranı → durum "ödendi (escrow'da)"
+- [x] Sipariş durum makinesi: `beklemede → ödendi → teslim edildi → revizyon | onaylandı`
+- [x] Geçersiz durum geçişlerini engelle (ör. ödenmemiş siparişi onaylayamazsın)
+- [x] Marka paneli: siparişlerim, onayla / revizyon iste
+- [x] Creator paneli: gelen siparişler, teslim et (dosya/link yükle)
+- [x] Durum çubuğu ile görsel ilerleme gösterimi
 
 **Çıktı:** Aynı siparişi iki taraftan görüp baştan sona ilerletebiliyorsun.
 
@@ -67,15 +67,15 @@ Influencer ve markaları buluşturan bir pazaryeri prototipi. Amaç: ölçeklene
 Birini seç, ikisini birden yapma:
 
 - [ ] **Seçenek A:** "Doğrulanmış metrik" rozeti (mock veriyle; gerçek API'ye nasıl bağlanacağını README'de anlat)
-- [ ] **Seçenek B:** Marka brief'ine göre önerilen creator listesi (basit puanlama: niş + bütçe + kitle uyumu, nedenini göster)
+- [x] **Seçenek B:** Marka brief'ine göre önerilen creator listesi (basit puanlama: niş + bütçe + kitle uyumu, nedenini göster)
 
 **Çıktı:** Demoda "bunu özellikle düşündüm" diyebileceğin bir an.
 
 ## Faz 5 — Cilalama ve sunum hazırlığı (1 gün)
 
-- [ ] Mobil uyum ve genel görsel tutarlılık
-- [ ] Hata durumları (kullanıcı dostu mesajlar)
-- [ ] README: proje ne, nasıl çalıştırılır, neyi bilerek yapmadık, sonraki adımlar
+- [x] Mobil uyum ve genel görsel tutarlılık
+- [x] Hata durumları (kullanıcı dostu mesajlar)
+- [x] README: proje ne, nasıl çalıştırılır, neyi bilerek yapmadık, sonraki adımlar
 - [ ] Ekran görüntüleri veya kısa ekran kaydı (yedek)
 - [ ] Demo provası: sıfırdan reset → baştan sona bir sipariş, 3-5 dakikada
 - [ ] Her teknik kararı tek cümleyle savunabil (neden Next.js, neden SQLite, neden durum makinesi)

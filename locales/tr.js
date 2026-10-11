@@ -876,6 +876,7 @@ const tr = {
     loading: "Paketlerin yükleniyor...",
     revisionsLabel: "Dahil revizyon",
     revisionsValue: "{count} revizyon",
+    revisionsValueOne: "{count} revizyon",
     stayLabel: "Yayında kalma süresi",
     stayValue: "Yayında kalır:",
     stays: { "": "Belirtilmemiş", "24h": "24 saat", "7d": "7 gün", "30d": "30 gün", permanent: "Süresiz" },
@@ -975,6 +976,13 @@ const tr = {
     myOrders: "Siparişlerim",
     logOut: "Çıkış yap",
     loading: "Hesabın yükleniyor...",
+  },
+
+  errorPage: {
+    heading: "Bir şeyler ters gitti",
+    text: "Beklenmedik bir hata oluştu. Lütfen tekrar dene ya da ana sayfaya dön.",
+    retry: "Tekrar dene",
+    home: "Ana sayfaya dön",
   },
 
   notFound: {

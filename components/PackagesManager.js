@@ -146,7 +146,7 @@ function PackageCard({ pkg, lang }) {
           <p className="mt-2 text-sm text-ink-soft">
             {interpolate(messages.profile.packageDelivery, { days: pkg.deliveryDays })}
             {" · "}
-            {interpolate(copy.revisionsValue, { count: pkg.revisions })}
+            {interpolate(pkg.revisions === 1 ? copy.revisionsValueOne : copy.revisionsValue, { count: pkg.revisions })}
             {pkg.stay ? ` · ${copy.stayValue} ${copy.stays[pkg.stay]}` : ""}
           </p>
         </div>
