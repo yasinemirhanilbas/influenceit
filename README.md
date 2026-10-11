@@ -8,7 +8,7 @@ A two-sided marketplace prototype for Turkey where **brands find creators** and 
 - Creator directory with search and niche filters, and a public profile page per creator (stats, photos, social accounts, price packages).
 - Sign-up for brands (short form) and creators (4-step wizard: basic info, photos, social media, services and prices) and real login with a signed cookie.
 - Jobs: brands post jobs, creators apply with a message, brands choose or decline applicants and can close or reopen a job. Each open job shows suggested creators with the reasons for the match (niche, budget, delivery time, rating).
-- Orders with a status machine (waiting for payment, paid in escrow, delivered, revision, approved), mock payment and video delivery.
+- Orders with a status machine (waiting for payment, paid in escrow, delivered, revision, approved), mock payment and video delivery. Choosing an applicant creates the order from the job; a brand can also order a creator's package from the profile.
 - Creators manage their own packages (price, delivery time, revisions, stay on profile).
 - Account page for both roles, terms and privacy pages.
 
@@ -40,9 +40,9 @@ Start clean: `npm run reset`, then `npm run dev`. Use two browser windows (or on
 1. **Brand** (`northloom-coffee@example.com`): open *My account*. Show the open job and the suggested creators with the reasons for each match.
 2. **Brand**: click *Post a job*, fill the form, submit. The job appears in the public list.
 3. **Creator** (`mira-solis@example.com`, other window): open the job, send an application with a short message. Show *My account* with the status "Waiting".
-4. **Brand**: in *My account*, open the applications of the job and click *Choose creator*. The job closes, the creator sees "Chosen".
-5. **Brand**: open the creator profile, pick a package, place the order (status "Waiting for payment"), then fill the mock payment form with any numbers and pay: "Paid, in escrow".
-6. **Creator**: open the order and deliver it with a short video and a note.
+4. **Brand**: in *My account*, open the applications of the job and click *Choose creator*. The job closes and an order is created from the job (job price, status "Waiting for payment"). The creator sees "Chosen" and the order appears in *My orders* of both sides.
+5. **Brand**: click *Open order* and fill the mock payment form with any numbers: "Paid, in escrow". Before the payment the creator has no delivery form.
+6. **Creator**: open *My orders*, open the order and deliver it with a short video and a note.
 7. **Brand**: ask for a revision once, **creator** delivers again, **brand** approves. The status bar reaches "Approved" and the escrow is shown as released.
 8. **Creator**: open *My packages* and edit a package. The public profile shows the change.
 

@@ -146,21 +146,33 @@ export function BrandJobs({ jobs, suggestions = {}, lang }) {
                       <ActionForm action={startConversationAction} fields={{ lang, creatorSlug: application.creator.slug }}>
                         {messagesCopy.messageCreator}
                       </ActionForm>
+                      {application.status === "ACCEPTED" && job.order ? (
+                        <Button href={routes.order(job.order.id)} variant="secondary" arrow={false}>
+                          {account.openOrder}
+                        </Button>
+                      ) : null}
                       {application.status === "PENDING" ? (
                         <>
-                          <ActionForm action={decideApplicationAction} fields={{ lang, applicationId: application.id, decision: "accept" }} primary>
-                            {account.accept}
-                          </ActionForm>
+                          {job.order ? null : (
+                            <ActionForm action={decideApplicationAction} fields={{ lang, applicationId: application.id, decision: "accept" }} primary>
+                              {account.accept}
+                            </ActionForm>
+                          )}
                           <ActionForm action={decideApplicationAction} fields={{ lang, applicationId: application.id, decision: "reject" }}>
                             {account.reject}
                           </ActionForm>
                         </>
-                      ) : (
+                      ) : application.status === "ACCEPTED" && job.order && job.order.status !== "PENDING" ? null : (
                         <ActionForm action={decideApplicationAction} fields={{ lang, applicationId: application.id, decision: "reset" }}>
                           {account.undoDecision}
                         </ActionForm>
                       )}
                     </div>
+                    {application.status === "ACCEPTED" && job.order ? (
+                      <p className="mt-2 text-sm text-ink-soft">
+                        {job.order.status === "PENDING" ? account.orderPayHint : account.orderPaidHint}
+                      </p>
+                    ) : null}
                   </li>
                 ))}
               </ul>
@@ -200,7 +212,17 @@ export function CreatorApplications({ applications, lang }) {
               {account.applicationStatus[application.status] ?? account.applicationStatus.PENDING}
             </span>
             <p className="mt-2 whitespace-pre-line break-words text-sm leading-relaxed text-ink-soft">{application.message}</p>
-            <div className="mt-3">
+            {application.status === "ACCEPTED" && application.job.order ? (
+              <p className="mt-2 text-sm text-ink-soft">
+                {application.job.order.status === "PENDING" ? account.creatorOrderHint : account.creatorOrderPaidHint}
+              </p>
+            ) : null}
+            <div className="mt-3 flex flex-wrap gap-2">
+              {application.status === "ACCEPTED" && application.job.order ? (
+                <Button href={routes.order(application.job.order.id)} variant="secondary" arrow={false}>
+                  {account.openOrder}
+                </Button>
+              ) : null}
               <ActionForm action={startConversationAction} fields={{ lang, brandId: application.job.brand.id }}>
                 {messagesCopy.messageBrand}
               </ActionForm>

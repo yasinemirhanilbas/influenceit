@@ -114,7 +114,9 @@ model Order {
   id            Int       @id @default(autoincrement())
   brandId       Int
   creatorId     Int
-  packageId     Int
+  // A package order has a packageId. An order that starts from a chosen job applicant has a jobId instead.
+  packageId     Int?
+  jobId         Int?      @unique
   brief         String
   status        String    @default("PENDING") // see lib/orderStatus.js
   // Price is copied from the package at order time so later price edits do not change old orders.
@@ -134,7 +136,8 @@ model Order {
 
   brand   BrandProfile   @relation(fields: [brandId], references: [id])
   creator CreatorProfile @relation(fields: [creatorId], references: [id])
-  package Package        @relation(fields: [packageId], references: [id])
+  package Package?       @relation(fields: [packageId], references: [id])
+  job     Job?           @relation(fields: [jobId], references: [id])
 
   @@index([brandId])
   @@index([creatorId])
@@ -160,6 +163,7 @@ model Job {
 
   brand        BrandProfile  @relation(fields: [brandId], references: [id], onDelete: Cascade)
   applications Application[]
+  order        Order?
 
   @@index([brandId])
   @@index([status])

@@ -15,6 +15,7 @@ import {
   JOB_TITLE_MAX,
   NICHES,
 } from "@/lib/options";
+import { ORDER_STATUS } from "@/lib/orderStatus";
 import { getRoutes } from "@/lib/routes";
 import { getSessionUser } from "@/lib/session";
 import { isLocale } from "@/locales";
@@ -127,7 +128,9 @@ export async function setJobStatusAction(formData) {
   redirect(getRoutes(lang).account);
 }
 
-// accept = choose the creator (the job closes), reject = decline, reset = back to pending.
+// accept = choose the creator: the job closes and an order is created from the job (price and brief come from
+// the job), waiting for the brand's payment. reject = decline, reset = back to pending.
+// Once the order is paid the choice is final: it can no longer be undone or changed here.
 export async function decideApplicationAction(formData) {
   const lang = safeLang(formData);
   const decision = APPLICATION_DECISIONS[text(formData, "decision")];
@@ -136,10 +139,33 @@ export async function decideApplicationAction(formData) {
   if (user?.brandProfile && decision && applicationId !== null) {
     const application = await db.application.findUnique({ where: { id: applicationId }, include: { job: true } });
     if (application && application.job.brandId === user.brandProfile.id) {
-      await db.$transaction([
-        db.application.update({ where: { id: application.id }, data: { status: decision } }),
-        ...(decision === "ACCEPTED" ? [db.job.update({ where: { id: application.jobId }, data: { status: "CLOSED" } })] : []),
-      ]);
+      const { job } = application;
+      await db.$transaction(async (tx) => {
+        const order = await tx.order.findUnique({ where: { jobId: job.id } });
+        if (order && order.status !== ORDER_STATUS.PENDING) return; // already paid: final
+        if (decision === "ACCEPTED") {
+          if (order) return; // a creator is already chosen for this job
+          await tx.application.update({ where: { id: application.id }, data: { status: "ACCEPTED" } });
+          await tx.job.update({ where: { id: job.id }, data: { status: "CLOSED" } });
+          await tx.order.create({
+            data: {
+              brandId: job.brandId,
+              creatorId: application.creatorId,
+              jobId: job.id,
+              brief: job.summary,
+              status: ORDER_STATUS.PENDING,
+              packageName: job.title,
+              priceAmount: job.budgetAmount,
+              priceCurrency: job.budgetCurrency,
+            },
+          });
+          return;
+        }
+        // reject / reset: an unpaid order made by an earlier "choose" is removed, only for the chosen creator
+        if (order && order.creatorId === application.creatorId) await tx.order.delete({ where: { id: order.id } });
+        if (order && order.creatorId !== application.creatorId) return;
+        await tx.application.update({ where: { id: application.id }, data: { status: decision } });
+      });
       updateTag("jobs");
     }
   }

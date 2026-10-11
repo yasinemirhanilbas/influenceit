@@ -120,9 +120,9 @@ async function main() {
   await db.message.deleteMany();
   await db.conversation.deleteMany();
   await db.socialAccount.deleteMany();
+  await db.order.deleteMany();
   await db.application.deleteMany();
   await db.job.deleteMany();
-  await db.order.deleteMany();
   await db.package.deleteMany();
   await db.creatorProfile.deleteMany();
   await db.brandProfile.deleteMany();

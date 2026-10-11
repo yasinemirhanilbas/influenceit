@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Suspense } from "react";
 import { notFound, redirect } from "next/navigation";
 import Button from "@/components/Button";
@@ -78,6 +79,15 @@ async function OrderContent({ params }) {
           <p className="text-sm text-ink-soft">
             {copy.placedOn}: {formatDate(order.createdAt, intl)}
           </p>
+          {order.job ? (
+            <p className="text-sm text-ink-soft">
+              {copy.fromJob}:{" "}
+              <Link href={routes.job(order.job.id)} className="font-semibold text-brand hover:underline">
+                {(lang === "tr" && order.job.titleTr) || order.job.title}
+              </Link>{" "}
+              · {interpolate(copy.deliveryDays, { days: order.job.deliveryDays })}
+            </p>
+          ) : null}
         </div>
 
         <div className="mt-8 rounded-card border border-line bg-card p-6 shadow-card">

@@ -51,7 +51,7 @@ async function AccountContent({ lang }) {
       db.order.count({ where: { brandId: user.brandProfile.id } }),
       db.job.findMany({
         where: { brandId: user.brandProfile.id },
-        include: { applications: { include: { creator: { include: { user: true } } }, orderBy: { id: "desc" } } },
+        include: { order: true, applications: { include: { creator: { include: { user: true } } }, orderBy: { id: "desc" } } },
         orderBy: { createdAt: "desc" },
       }),
     ]);
@@ -94,7 +94,7 @@ async function AccountContent({ lang }) {
       db.package.count({ where: { creatorId: creator.id } }),
       db.application.findMany({
         where: { creatorId: creator.id },
-        include: { job: { include: { brand: true } } },
+        include: { job: { include: { brand: true, order: { select: { id: true, status: true, creatorId: true } } } } },
         orderBy: { id: "desc" },
       }),
     ]);
