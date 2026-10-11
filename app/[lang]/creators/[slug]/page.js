@@ -1,12 +1,16 @@
 import Link from "next/link";
+import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import Avatar from "@/components/Avatar";
 import Button from "@/components/Button";
+import MessageButton from "@/components/MessageButton";
+import PhotoGallery from "@/components/PhotoGallery";
 import { VerifiedIcon, StarIcon } from "@/components/icons";
 import SignUpCta from "@/components/SignUpCta";
 import { formatCompactNumber, formatCurrency, formatRating } from "@/lib/format";
 import { getCreator, getCreatorSlugs } from "@/lib/queries";
 import { getRoutes } from "@/lib/routes";
+import { getSessionUser } from "@/lib/session";
 import { getIntlLocale, getMessages, interpolate, isLocale } from "@/locales";
 
 // The language comes from the parent layout; this prebuilds every creator for it.
@@ -22,6 +26,22 @@ export async function generateMetadata({ params }) {
   if (!creator) return {};
   const { profile } = getMessages(lang);
   return { title: interpolate(profile.metaTitle, { name: creator.name }), description: creator.bio };
+}
+
+// Depends on who is logged in, so it renders at request time (inside Suspense).
+// Brands can message the creator; visitors who are not logged in are sent to the login page.
+async function ProfileActions({ lang, slug }) {
+  const user = await getSessionUser();
+  const { messages } = getMessages(lang);
+  if (!user) {
+    return (
+      <Button href={getRoutes(lang).login} variant="secondary" arrow={false}>
+        {messages.logInToMessage}
+      </Button>
+    );
+  }
+  if (user.brandProfile) return <MessageButton lang={lang} creatorSlug={slug} label={messages.messageCreator} />;
+  return null;
 }
 
 export default async function CreatorProfilePage({ params }) {
@@ -54,8 +74,10 @@ export default async function CreatorProfilePage({ params }) {
             ← {profile.back}
           </Link>
 
-          <div className="mt-6 flex flex-col gap-6 sm:flex-row sm:items-center">
-            <Avatar name={creator.name} avatar={creator.avatar} size="h-24 w-24" text="text-3xl" />
+          <div className="mt-6 flex flex-col gap-6 sm:flex-row sm:items-center sm:gap-8">
+            <div className="shrink-0 self-start overflow-hidden rounded-2xl shadow-card ring-4 ring-card">
+              <Avatar name={creator.name} avatar={{ ...creator.avatar, shape: "square" }} size="h-36 w-36 sm:h-44 sm:w-44" text="text-5xl" />
+            </div>
             <div className="min-w-0">
               <h1 className="flex items-center gap-2 font-display text-4xl font-semibold leading-tight sm:text-5xl">
                 {creator.name}
@@ -74,6 +96,11 @@ export default async function CreatorProfilePage({ params }) {
                 <span className="rounded-full border border-line bg-card px-3 py-1 font-medium text-ink-soft">
                   {profile.cities[creator.city] ?? creator.city}
                 </span>
+              </div>
+              <div className="mt-5">
+                <Suspense fallback={null}>
+                  <ProfileActions lang={lang} slug={slug} />
+                </Suspense>
               </div>
             </div>
           </div>
@@ -118,19 +145,10 @@ export default async function CreatorProfilePage({ params }) {
         {creator.gallery.length > 0 ? (
           <div className="mt-12">
             <h2 className="font-display text-2xl font-semibold">{profile.galleryHeading}</h2>
-            <ul className="mt-6 grid max-w-3xl grid-cols-3 gap-3 sm:gap-5">
-              {creator.gallery.map((src, index) => (
-                <li key={src}>
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={src}
-                    alt={interpolate(profile.photoAlt, { name: creator.name, number: index + 1 })}
-                    loading="lazy"
-                    className="aspect-square w-full rounded-card border border-line object-cover"
-                  />
-                </li>
-              ))}
-            </ul>
+            <PhotoGallery
+              photos={creator.gallery.map((src, index) => ({ src, alt: interpolate(profile.photoAlt, { name: creator.name, number: index + 1 }) }))}
+              labels={profile}
+            />
           </div>
         ) : null}
 

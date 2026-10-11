@@ -7,6 +7,7 @@ import PageHeader from "@/components/PageHeader";
 import { db } from "@/lib/db";
 import { imageUrl, splitList } from "@/lib/images";
 import { suggestCreators } from "@/lib/matching";
+import { countUnread } from "@/lib/messages";
 import { getRoutes } from "@/lib/routes";
 import { getSessionUser } from "@/lib/session";
 import { logOutAction } from "@/app/[lang]/auth/actions";
@@ -30,11 +31,12 @@ function Row({ label, value }) {
 // Reads the login cookie, so it must render at request time (inside Suspense).
 async function AccountContent({ lang }) {
   const routes = getRoutes(lang);
-  const { account, featured, profile, signup } = getMessages(lang);
+  const { account, featured, profile, signup, messages: messagesCopy } = getMessages(lang);
   const categoryLabel = (id) => featured.niches[id] ?? id;
   const user = await getSessionUser();
   if (!user) redirect(routes.login);
 
+  const unread = await countUnread(user);
   const isBrand = user.role === "BRAND" && user.brandProfile;
   const creator = user.creatorProfile;
   const rows = [{ label: account.emailLabel, value: user.email }];
@@ -168,6 +170,9 @@ async function AccountContent({ lang }) {
         )}
         <Button href={routes.orders} variant="secondary" arrow={false}>
           {account.myOrders}
+        </Button>
+        <Button href={routes.messages} variant="secondary" arrow={false}>
+          {unread > 0 ? interpolate(messagesCopy.openWithCount, { count: unread }) : messagesCopy.open}
         </Button>
         {creator && hasPackages ? (
           <Button href={routes.creatorProfile(creator.slug)} variant="secondary" arrow={false}>

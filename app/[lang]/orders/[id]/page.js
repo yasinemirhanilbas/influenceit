@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 import { notFound, redirect } from "next/navigation";
 import Button from "@/components/Button";
+import MessageButton from "@/components/MessageButton";
 import OrderDeliverForm from "@/components/OrderDeliverForm";
 import OrderPayPanel from "@/components/OrderPayPanel";
 import OrderProgress from "@/components/OrderProgress";
@@ -43,7 +44,7 @@ async function OrderContent({ params }) {
   const { lang, id } = await params;
   if (!isLocale(lang)) notFound();
   const routes = getRoutes(lang);
-  const { orders: copy } = getMessages(lang);
+  const { orders: copy, messages: messagesCopy } = getMessages(lang);
   const intl = getIntlLocale(lang);
 
   const user = await getSessionUser();
@@ -160,10 +161,15 @@ async function OrderContent({ params }) {
           {actions.length === 0 && waiting ? <p className="mt-3 text-ink-soft">{waiting}</p> : null}
         </Section>
 
-        <div className="mt-10">
+        <div className="mt-10 flex flex-wrap items-center gap-3">
           <Button href={routes.orders} variant="secondary" arrow={false}>
             {copy.backToList}
           </Button>
+          {isBrand ? (
+            <MessageButton lang={lang} creatorSlug={order.creator.slug} label={messagesCopy.messageCreator} />
+          ) : (
+            <MessageButton lang={lang} brandId={order.brandId} label={messagesCopy.messageBrand} />
+          )}
         </div>
       </section>
     </>

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import ApplyForm from "@/components/ApplyForm";
+import MessageButton from "@/components/MessageButton";
 import Button from "@/components/Button";
 import SignUpCta from "@/components/SignUpCta";
 import { db } from "@/lib/db";
@@ -35,7 +36,7 @@ function Notice({ children }) {
 
 // Depends on who is logged in, so it renders at request time (inside Suspense).
 async function ApplySection({ job, lang, searchParams }) {
-  const { jobDetail } = getMessages(lang);
+  const { jobDetail, messages: messagesCopy } = getMessages(lang);
   const routes = getRoutes(lang);
   const query = await searchParams;
   const user = await getSessionUser();
@@ -73,12 +74,22 @@ async function ApplySection({ job, lang, searchParams }) {
     else body = <ApplyForm jobId={job.id} lang={lang} />;
   }
 
+  // A creator can ask the brand a question before applying (or after).
+  let messageBrand = null;
+  if (user?.creatorProfile) {
+    const brandRow = await db.job.findUnique({ where: { id: job.id }, select: { brandId: true } });
+    if (brandRow) {
+      messageBrand = <MessageButton lang={lang} brandId={brandRow.brandId} label={messagesCopy.messageBrand} className="mt-8" />;
+    }
+  }
+
   return (
     <div>
       {query?.posted ? <Notice>{jobDetail.posted}</Notice> : null}
       {query?.applied ? <Notice>{jobDetail.applied}</Notice> : null}
       <h2 className="font-display text-2xl font-semibold">{jobDetail.applyHeading}</h2>
       <div className="mt-4">{body}</div>
+      {messageBrand}
     </div>
   );
 }

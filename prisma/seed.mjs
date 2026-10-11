@@ -1,6 +1,10 @@
 // Seed script: fills the database with FICTIONAL creators, brands and orders.
 // No real people, brands or logos. Data is fixed (no randomness), so every machine gets the same result.
 // Run with: npm run db:seed (or npm run reset to wipe and refill).
+import { createHash } from "node:crypto";
+import { copyFileSync, existsSync, mkdirSync } from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 import { PrismaClient } from "@prisma/client";
 import { PrismaBetterSqlite3 } from "@prisma/adapter-better-sqlite3";
 import { hashPassword } from "../lib/password.mjs";
@@ -11,6 +15,19 @@ const adapter = new PrismaBetterSqlite3({
 const db = new PrismaClient({ adapter });
 
 const CURRENCY = "TRY";
+
+// Fictional seed photos (abstract illustrations, no real people) live in prisma/seed-images/.
+// They are copied into storage/images/ under a fixed 32-character name, the same place real uploads go.
+const SEED_IMAGE_DIR = path.join(path.dirname(fileURLToPath(import.meta.url)), "seed-images");
+const STORAGE_IMAGE_DIR = path.join(process.cwd(), "storage", "images");
+function placeSeedImage(file) {
+  const source = path.join(SEED_IMAGE_DIR, file);
+  if (!existsSync(source)) return null;
+  mkdirSync(STORAGE_IMAGE_DIR, { recursive: true });
+  const name = `${createHash("md5").update(file).digest("hex")}.jpg`;
+  copyFileSync(source, path.join(STORAGE_IMAGE_DIR, name));
+  return name;
+}
 // Every seed account uses this shared demo password. Emails are <slug>@example.com.
 const DEMO_PASSWORD = "demo1234";
 const CITIES = ["Istanbul", "Ankara", "Izmir", "Bursa", "Antalya", "Istanbul", "Izmir", "Ankara"];
@@ -100,6 +117,8 @@ const ORDERS = [
 
 async function main() {
   // Wipe in dependency order so the seed can be re-run safely.
+  await db.message.deleteMany();
+  await db.conversation.deleteMany();
   await db.socialAccount.deleteMany();
   await db.application.deleteMany();
   await db.job.deleteMany();
@@ -131,6 +150,9 @@ async function main() {
         avatarShape,
         avatarBg,
         avatarFg,
+        profileImage: placeSeedImage(`${slug}-profile.jpg`),
+        // 0, 1 or 2 extra photos, depending on the creator
+        galleryImages: [1, 2].map((n) => placeSeedImage(`${slug}-gallery-${n}.jpg`)).filter(Boolean).join(","),
         // Split the follower total over one or two platforms so the numbers add up.
         socialAccounts: {
           create:
@@ -222,6 +244,42 @@ async function main() {
     });
   }
 
+  // A few conversations so the inbox is not empty. [brandIndex, creator slug, [who writes ("B" brand, "C" creator), text, minutes ago]]
+  const CHATS = [
+    [0, "eylul-rowan", [
+      ["B", "Hi Eylül, we love your recipe videos. Do you have time for a cold brew video next week?", 3000],
+      ["C", "Hi! Thank you. Yes, I can film on Tuesday. Do you want it in the morning light?", 2900],
+      ["B", "Perfect, morning light please. I will place the order now.", 2800],
+    ]],
+    [1, "mira-solis", [
+      ["B", "Hello Mira, could you also show the product in a night routine?", 600],
+      ["C", "Sure, I can add a short night-routine part. It would add one day to the delivery.", 580],
+      ["B", "That works for us. Thank you!", 120],
+    ]],
+    [2, "arda-valen", [["C", "Hello, I saw your open brief. Is a 60-second video also fine, or do you need exactly 30 seconds?", 90]]],
+  ];
+  for (const [brandIndex, slug, lines] of CHATS) {
+    const brand = brands[brandIndex];
+    const creator = creatorBySlug.get(slug);
+    const brandUser = await db.user.findUnique({ where: { id: brand.userId } });
+    const stamp = (minutesAgo) => new Date(Date.now() - minutesAgo * 60000);
+    const conversation = await db.conversation.create({
+      data: { brandId: brand.id, creatorId: creator.id, createdAt: stamp(lines[0][2]), updatedAt: stamp(lines[lines.length - 1][2]) },
+    });
+    for (const [who, body, minutesAgo] of lines) {
+      await db.message.create({
+        data: {
+          conversationId: conversation.id,
+          senderId: who === "B" ? brandUser.id : creator.userId,
+          body,
+          createdAt: stamp(minutesAgo),
+          // Older messages are read; the newest one stays unread so the badge shows up.
+          readAt: minutesAgo > 200 ? stamp(minutesAgo - 5) : null,
+        },
+      });
+    }
+  }
+
   const counts = {
     users: await db.user.count(),
     creators: await db.creatorProfile.count(),
@@ -230,6 +288,8 @@ async function main() {
     orders: await db.order.count(),
     jobs: await db.job.count(),
     applications: await db.application.count(),
+    conversations: await db.conversation.count(),
+    messages: await db.message.count(),
   };
   console.log("Seed complete:", counts);
 }

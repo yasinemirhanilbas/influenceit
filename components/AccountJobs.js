@@ -2,6 +2,7 @@ import Link from "next/link";
 import Avatar from "./Avatar";
 import Button from "./Button";
 import { decideApplicationAction, setJobStatusAction } from "@/app/[lang]/jobs/actions";
+import { startConversationAction } from "@/app/[lang]/messages/actions";
 import { formatCurrency, formatRating } from "@/lib/format";
 import { getRoutes } from "@/lib/routes";
 import { getIntlLocale, getMessages, interpolate } from "@/locales";
@@ -35,7 +36,7 @@ function ActionForm({ action, fields, children, primary = false }) {
 
 // Brand: own jobs with the applications they received.
 export function BrandJobs({ jobs, suggestions = {}, lang }) {
-  const { account, jobs: jobsCopy } = getMessages(lang);
+  const { account, jobs: jobsCopy, messages: messagesCopy } = getMessages(lang);
   const routes = getRoutes(lang);
   const intl = getIntlLocale(lang);
 
@@ -142,6 +143,9 @@ export function BrandJobs({ jobs, suggestions = {}, lang }) {
                     </p>
                     <p className="mt-1 whitespace-pre-line break-words text-sm leading-relaxed text-ink-soft">{application.message}</p>
                     <div className="mt-3 flex flex-wrap gap-2">
+                      <ActionForm action={startConversationAction} fields={{ lang, creatorSlug: application.creator.slug }}>
+                        {messagesCopy.messageCreator}
+                      </ActionForm>
                       {application.status === "PENDING" ? (
                         <>
                           <ActionForm action={decideApplicationAction} fields={{ lang, applicationId: application.id, decision: "accept" }} primary>
@@ -171,7 +175,7 @@ export function BrandJobs({ jobs, suggestions = {}, lang }) {
 
 // Creator: the applications they sent.
 export function CreatorApplications({ applications, lang }) {
-  const { account } = getMessages(lang);
+  const { account, messages: messagesCopy } = getMessages(lang);
   const routes = getRoutes(lang);
 
   return (
@@ -196,6 +200,11 @@ export function CreatorApplications({ applications, lang }) {
               {account.applicationStatus[application.status] ?? account.applicationStatus.PENDING}
             </span>
             <p className="mt-2 whitespace-pre-line break-words text-sm leading-relaxed text-ink-soft">{application.message}</p>
+            <div className="mt-3">
+              <ActionForm action={startConversationAction} fields={{ lang, brandId: application.job.brand.id }}>
+                {messagesCopy.messageBrand}
+              </ActionForm>
+            </div>
           </li>
         ))}
       </ul>
