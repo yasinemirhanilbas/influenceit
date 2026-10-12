@@ -5,10 +5,11 @@ A two-sided marketplace prototype for Turkey where **brands find creators** and 
 ## What works
 
 - Bilingual site (English and Turkish) with a calm light theme.
-- Creator directory with search and niche filters, and a public profile page per creator (stats, photos, social accounts, price packages).
+- Creator directory with search and niche filters, and a public profile page per creator (stats, clickable photo gallery, social accounts, price packages).
 - Sign-up for brands (short form) and creators (4-step wizard: basic info, photos, social media, services and prices) and real login with a signed cookie.
 - Jobs: brands post jobs, creators apply with a message, brands choose or decline applicants and can close or reopen a job. Each open job shows suggested creators with the reasons for the match (niche, budget, delivery time, rating).
 - Orders with a status machine (waiting for payment, paid in escrow, delivered, revision, approved), mock payment and video delivery. Choosing an applicant creates the order from the job; a brand can also order a creator's package from the profile.
+- Messaging between brands and creators (inbox with unread count, one conversation per pair, started from a profile, job, order or application).
 - Creators manage their own packages (price, delivery time, revisions, stay on profile).
 - Account page for both roles, terms and privacy pages.
 
@@ -44,7 +45,8 @@ Start clean: `npm run reset`, then `npm run dev`. Use two browser windows (or on
 5. **Brand**: click *Open order* and fill the mock payment form with any numbers: "Paid, in escrow". Before the payment the creator has no delivery form.
 6. **Creator**: open *My orders*, open the order and deliver it with a short video and a note.
 7. **Brand**: ask for a revision once, **creator** delivers again, **brand** approves. The status bar reaches "Approved" and the escrow is shown as released.
-8. **Creator**: open *My packages* and edit a package. The public profile shows the change.
+8. **Brand** or **creator**: open *Messages* (or the "Message" button on an order or profile), write a message, and answer it from the other window.
+9. **Creator**: open *My packages* and edit a package. The public profile shows the change.
 
 Invalid steps are refused on the server (for example approving an unpaid order, or a creator choosing applicants).
 
@@ -79,12 +81,14 @@ Invalid steps are refused on the server (for example approving an unpaid order, 
 
 - **Real payments and escrow.** This needs a licensed payment provider. Here the money is only shown as held until the brand approves.
 - **Real identity checks.** Follower counts are typed in by the creator and not verified, because most platforms have no public API for it. In a real product they would come from OAuth connections.
-- **Messaging, reviews, notifications, mobile app, deployment.** Out of scope for a demo.
+- **Reviews, notifications (including email), mobile app, deployment.** Out of scope for a demo. Messaging is simple on purpose: text only, refreshed every few seconds, no attachments.
 
 ## Next steps
 
 - Dark theme (designed, not built).
 - Verified metrics through platform OAuth.
 - A search service for larger creator lists.
+
+Run the tests with `npm test` (order status machine, creator matching, language files). A one-page summary for interviews is in `INTERVIEW.md`.
 
 Detailed history of every change: `CHANGELOG.md`. Working rules and decisions: `CLAUDE.md`.

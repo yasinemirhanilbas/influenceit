@@ -2,6 +2,14 @@
 
 Approved changes, newest first. Format: date, what, files, why.
 
+## 2026-10-12 (tests, interview summary, security review)
+- `npm test` (Node's built-in test runner, no new package): 18 tests for the order status machine (`lib/orderStatus.js`), the creator matching score (`lib/matching.js`) and the language files (same keys and placeholders in English and Turkish, no empty text). Breaking a status rule on purpose made two tests fail. Files: `tests/orderStatus.test.mjs`, `tests/matching.test.mjs`, `tests/locales.test.mjs`, `package.json` (`test` script).
+- `INTERVIEW.md`: one-page summary (problem, demo, what is real and simulated, technical decisions, known limits, how to grow it). README points to it and to `npm test`.
+- Read-only security review of sessions, login, uploads, video and image routes, messaging and order actions. Findings (nothing changed yet) are in the `CLAUDE.md` Backlog.
+
+## 2026-10-12 (docs catch-up after messaging and order-from-job)
+- README: "What works" lists the photo gallery and messaging, "not built" no longer says messaging is missing, demo script has a messaging step (now 9 steps). ROADMAP out-of-scope list updated. Checked after pulling: lint, build, reset and the order, package and account tests pass. Files: `README.md`, `ROADMAP.md`, `CHANGELOG.md`.
+
 ## 2026-10-11 (order from a chosen job applicant)
 - When a brand clicks "Choose creator" on an application, an order is now created at once from the job: price = job budget, delivery time = job delivery days, brief = job summary, order name = job title, status "Waiting for payment". It shows in "My orders" of both the brand and the creator, with a "From job" line and a link back to the job. The job closes as before.
 - The brand pays on the order page (mock payment). The creator cannot deliver before that: the delivery form only appears once the order is paid (the status machine already allowed `deliver` only from PAID or REVISION; the order page explains who is waited for). Delivery, revision and approval work as before.

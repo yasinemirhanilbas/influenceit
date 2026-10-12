@@ -84,9 +84,9 @@ Birini seç, ikisini birden yapma:
 
 ## Kapsam dışı (bilerek yapılmıyor)
 
-Gerçek ödeme / escrow, gerçek kimlik doğrulama, gerçek sosyal medya API bağlantısı, mesajlaşma, yorum sistemi, bildirimler, mobil uygulama, canlıya alma.
+Gerçek ödeme / escrow, gerçek kimlik doğrulama, gerçek sosyal medya API bağlantısı, yorum sistemi, bildirimler, mobil uygulama, canlıya alma.
 
-Bunların neden dışarıda bırakıldığını anlatabilmek de mülakatta artı puandır. Ör. gerçek escrow için lisanslı bir ödeme sağlayıcısı gerekir.
+Bunların neden dışarıda bırakıldığını anlatabilmek de mülakatta artı puandır. Ör. gerçek escrow için lisanslı bir ödeme sağlayıcısı gerekir. (Basit metin mesajlaşması sonradan eklendi; dosya eki, anlık güncelleme ve bildirim yok.)
 
 ## Tahmini süre
 
