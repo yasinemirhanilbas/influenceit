@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import "../globals.css";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
+import AssistantWidget from "@/components/AssistantWidget";
 import { getMessages, isLocale, locales } from "@/locales";
 
 const fraunces = Fraunces({
@@ -56,6 +57,7 @@ export default async function RootLayout({ children, params }) {
         <SiteHeader lang={lang} />
         <main id="main">{children}</main>
         <SiteFooter lang={lang} />
+        <AssistantWidget lang={lang} copy={messages.assistant} />
       </body>
     </html>
   );

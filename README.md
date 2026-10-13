@@ -12,6 +12,7 @@ A two-sided marketplace prototype for Turkey where **brands find creators** and 
 - Messaging between brands and creators (inbox with unread count, one conversation per pair, started from a profile, job, order or application).
 - Creators manage their own packages (price, delivery time, revisions, stay on profile).
 - Account page for both roles, terms and privacy pages.
+- Site assistant: a chat bubble (bottom right) powered by Gemini that answers questions about the site only. Needs `GEMINI_API_KEY` in `.env` (see `.env.example`); without it the assistant says it is not available and everything else works.
 
 ## Run it
 
@@ -24,6 +25,8 @@ npm run dev     # http://localhost:3030
 ```
 
 `npm run reset` can be run again at any time to start from clean demo data.
+
+Optional: copy `.env.example` to `.env` and set `GEMINI_API_KEY` to turn on the site assistant (key from Google AI Studio; never commit `.env`). Restart `npm run dev` after changing `.env`.
 
 Demo accounts (password `demo1234`):
 
@@ -47,6 +50,7 @@ Start clean: `npm run reset`, then `npm run dev`. Use two browser windows (or on
 7. **Brand**: ask for a revision once, **creator** delivers again, **brand** approves. The status bar reaches "Approved" and the escrow is shown as released.
 8. **Brand** or **creator**: open *Messages* (or the "Message" button on an order or profile), write a message, and answer it from the other window.
 9. **Creator**: open *My packages* and edit a package. The public profile shows the change.
+10. **Anyone**: click the chat bubble (bottom right) and ask, for example, "How does escrow work?". Then ask something off topic ("Write me a poem") to show that it politely declines.
 
 Invalid steps are refused on the server (for example approving an unpaid order, or a creator choosing applicants).
 

@@ -1068,6 +1068,27 @@ const en = {
     },
   },
 
+  assistant: {
+    open: "Open the assistant",
+    close: "Close the assistant",
+    title: "InfluenceIt assistant",
+    subtitle: "Ask me anything about this site",
+    greeting: "Hi! I can help with orders, payments, jobs, packages and messages on InfluenceIt. What would you like to know?",
+    placeholder: "Type your question",
+    send: "Send",
+    thinking: "Thinking...",
+    disclaimer: "AI assistant for this demo site. Answers can be wrong.",
+    suggestions: ["How does escrow work?", "How do I apply to a job?", "When does the creator get paid?"],
+    errors: {
+      generic: "Something went wrong. Please try again.",
+      unavailable: "The assistant is not available right now.",
+      tooFast: "Too many questions in a short time. Please wait a moment.",
+      tooLong: "Your question is too long. Please shorten it.",
+      invalid: "Your question could not be sent. Please try again.",
+      upstream: "The assistant could not answer right now. Please try again.",
+    },
+  },
+
   footer: {
     tagline: "Hire creators. Pay only when you approve.",
     navTitle: "Explore",

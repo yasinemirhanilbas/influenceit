@@ -1068,6 +1068,27 @@ const tr = {
     },
   },
 
+  assistant: {
+    open: "Asistanı aç",
+    close: "Asistanı kapat",
+    title: "InfluenceIt asistanı",
+    subtitle: "Bu site hakkında her şeyi sorabilirsin",
+    greeting: "Merhaba! InfluenceIt'te siparişler, ödemeler, ilanlar, paketler ve mesajlar konusunda yardımcı olabilirim. Ne öğrenmek istersin?",
+    placeholder: "Sorunu yaz",
+    send: "Gönder",
+    thinking: "Düşünüyorum...",
+    disclaimer: "Bu demo sitenin yapay zeka asistanı. Cevaplar hatalı olabilir.",
+    suggestions: ["Emanet (escrow) nasıl çalışır?", "Bir ilana nasıl başvururum?", "İçerik üretici parasını ne zaman alır?"],
+    errors: {
+      generic: "Bir şeyler ters gitti. Lütfen tekrar dene.",
+      unavailable: "Asistan şu anda kullanılamıyor.",
+      tooFast: "Kısa sürede çok fazla soru sordun. Lütfen biraz bekle.",
+      tooLong: "Sorun çok uzun. Lütfen kısalt.",
+      invalid: "Sorun gönderilemedi. Lütfen tekrar dene.",
+      upstream: "Asistan şu anda cevap veremedi. Lütfen tekrar dene.",
+    },
+  },
+
   footer: {
     tagline: "İçerik üreticileri bulun. Yalnızca onayladığınızda ödeyin.",
     navTitle: "Keşfet",
