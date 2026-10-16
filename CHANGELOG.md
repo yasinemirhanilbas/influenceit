@@ -11,6 +11,12 @@ Approved changes, newest first. Format: date, what, files, why.
 - Why: visitors (and the demo audience) can get answers about how the marketplace works without leaving the page.
 - Verified with a browser and API test (23 checks) against a local fake Gemini server (same stream format): streamed answer incl. Turkish characters and events split across network chunks, key sent only as header, rules and knowledge in the system instruction, history cut to 10, invalid input rejected (too long, empty, wrong role, bad JSON), upstream error and empty answer become clean errors, rate limit, Turkish UI, Esc/focus, 375 px width, no page errors, and "not available" without a key. Not tested: real Gemini answers (no key yet); try the questions in demo script step 10 of the README.
 
+## 2026-10-16 (assistant fixes found while testing a clean clone)
+- Default model is now `gemini-3.5-flash` (`lib/assistantConfig.js`): `gemini-2.5-flash` is closed to new API keys, so everyone with a new key got "could not answer". `.env.example` and README updated; `GEMINI_MODEL` still overrides.
+- `app/api/assistant/route.js`: one automatic retry when Gemini answers 503 ("high demand"); a stream that ends without Gemini's final event (`finishReason`) is now an error, so the chat window drops the half answer instead of showing it as finished (this was seen once: an answer cut after "...yardımcı ol"); the last buffered event is also read when the stream ends without a final line break.
+- `lib/assistantKnowledge.js`: applying to a job needs only a short message (no package); a block with the Turkish menu, button and status names, so Turkish answers say "Açık işler", "Hesabım" and so on instead of the English names.
+- Verified with a local fake Gemini server (normal answer, answer cut off, last event without line break, 503 once, 503 always): complete answers pass, the cut-off answer ends the transfer with an error, 503 once succeeds, 503 always gives a clean error. Lint and build clean. The real Gemini could not be tested again afterwards because the free quota was used up (HTTP 429); the real stream format (final event carries `finishReason`) was checked on an earlier saved response.
+
 ## 2026-10-16 (reviewer section in the README)
 - README: new section "For reviewers: how to run it" at the top (clone, install, reset, run, demo accounts, notes about fictional data, the optional assistant key and `npm test`), written for people who receive the repository link. Files: `README.md`, `CHANGELOG.md`.
 

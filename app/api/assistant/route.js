@@ -46,6 +46,11 @@ function cleanMessages(raw) {
   return recent;
 }
 
+// True when this stream event says the answer is complete (Gemini sets finishReason on the last event).
+function isFinal(event) {
+  return Boolean(event?.candidates?.[0]?.finishReason);
+}
+
 // Picks the text out of one Gemini stream event.
 function textOf(event) {
   const parts = event?.candidates?.[0]?.content?.parts;
@@ -71,21 +76,28 @@ export async function POST(request) {
 
   const base = process.env.GEMINI_API_BASE || "https://generativelanguage.googleapis.com";
   const model = process.env.GEMINI_MODEL || ASSISTANT_DEFAULT_MODEL;
+  const url = `${base}/v1beta/models/${encodeURIComponent(model)}:streamGenerateContent?alt=sse`;
+  const init = {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "x-goog-api-key": apiKey },
+    body: JSON.stringify({
+      systemInstruction: { parts: [{ text: buildSystemInstruction(lang) }] },
+      contents: messages.map((message) => ({
+        role: message.role === "assistant" ? "model" : "user",
+        parts: [{ text: message.content }],
+      })),
+      generationConfig: { temperature: ASSISTANT_TEMPERATURE, maxOutputTokens: ASSISTANT_MAX_OUTPUT_TOKENS },
+    }),
+    signal: AbortSignal.any([request.signal, AbortSignal.timeout(ASSISTANT_TIMEOUT_MS)]),
+  };
   let upstream;
   try {
-    upstream = await fetch(`${base}/v1beta/models/${encodeURIComponent(model)}:streamGenerateContent?alt=sse`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json", "x-goog-api-key": apiKey },
-      body: JSON.stringify({
-        systemInstruction: { parts: [{ text: buildSystemInstruction(lang) }] },
-        contents: messages.map((message) => ({
-          role: message.role === "assistant" ? "model" : "user",
-          parts: [{ text: message.content }],
-        })),
-        generationConfig: { temperature: ASSISTANT_TEMPERATURE, maxOutputTokens: ASSISTANT_MAX_OUTPUT_TOKENS },
-      }),
-      signal: AbortSignal.any([request.signal, AbortSignal.timeout(ASSISTANT_TIMEOUT_MS)]),
-    });
+    upstream = await fetch(url, init);
+    // Gemini sometimes answers "high demand" (503) for a moment: try once more before giving up.
+    if (upstream.status === 503) {
+      await new Promise((resolve) => setTimeout(resolve, 800));
+      upstream = await fetch(url, init);
+    }
   } catch {
     return json("upstream", 502);
   }
@@ -95,25 +107,40 @@ export async function POST(request) {
   const encoder = new TextEncoder();
   const reader = upstream.body.getReader();
   let buffer = "";
+  let finished = false; // did Gemini tell us the answer is complete?
+
+  // Reads the texts out of complete "data:" lines; remembers whether the final event was seen.
+  function readLines(lines) {
+    const texts = [];
+    for (const line of lines) {
+      if (!line.startsWith("data:")) continue;
+      try {
+        const event = JSON.parse(line.slice(5).trim());
+        const text = textOf(event);
+        if (text) texts.push(text);
+        if (isFinal(event)) finished = true;
+      } catch {
+        // an incomplete or unknown event: ignore it
+      }
+    }
+    return texts;
+  }
 
   // Reads from Gemini until at least one piece of text is found. Returns the texts, or null when the stream ended.
+  // A stream that ends without the final event is an error, so a cut-off answer is never shown as complete.
   async function nextTexts() {
     for (;;) {
       const { done, value } = await reader.read();
-      if (done) return null;
+      if (done) {
+        const rest = readLines(buffer.split("\n"));
+        buffer = "";
+        if (!finished) throw new Error("assistant stream ended early");
+        return rest.length > 0 ? rest : null;
+      }
       buffer += decoder.decode(value, { stream: true });
       const lines = buffer.split("\n");
       buffer = lines.pop() ?? "";
-      const texts = [];
-      for (const line of lines) {
-        if (!line.startsWith("data:")) continue;
-        try {
-          const text = textOf(JSON.parse(line.slice(5).trim()));
-          if (text) texts.push(text);
-        } catch {
-          // an incomplete or unknown event: ignore it
-        }
-      }
+      const texts = readLines(lines);
       if (texts.length > 0) return texts;
     }
   }

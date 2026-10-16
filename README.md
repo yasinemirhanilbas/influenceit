@@ -20,7 +20,7 @@ A two-sided marketplace prototype for Turkey where **brands find creators** and 
 Good to know:
 - Nothing is real: all people, brands, prices and payments are fictional, and the payment form only simulates holding money in escrow. Do not type real card numbers.
 - No database or account setup is needed: `npm run reset` creates a local SQLite file with demo data and can be run again at any time to start clean.
-- The chat assistant (bottom right) needs a Google Gemini API key, which is not part of the repository. Without it the assistant says it is unavailable and everything else works. To try it, copy `.env.example` to `.env`, set `GEMINI_API_KEY` and `GEMINI_MODEL="gemini-3.5-flash"`, and restart `npm run dev`.
+- The chat assistant (bottom right) needs a Google Gemini API key, which is not part of the repository. Without it the assistant says it is unavailable and everything else works. To try it, copy `.env.example` to `.env`, set `GEMINI_API_KEY`, and restart `npm run dev`. (If Google closes the default model, set `GEMINI_MODEL` in `.env`.)
 - Run `npm test` for the automated tests (order status machine, creator matching, language files).
 - If port 3030 is taken, stop the other program or change the port in `package.json`.
 
