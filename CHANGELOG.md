@@ -11,6 +11,11 @@ Approved changes, newest first. Format: date, what, files, why.
 - Why: visitors (and the demo audience) can get answers about how the marketplace works without leaving the page.
 - Verified with a browser and API test (23 checks) against a local fake Gemini server (same stream format): streamed answer incl. Turkish characters and events split across network chunks, key sent only as header, rules and knowledge in the system instruction, history cut to 10, invalid input rejected (too long, empty, wrong role, bad JSON), upstream error and empty answer become clean errors, rate limit, Turkish UI, Esc/focus, 375 px width, no page errors, and "not available" without a key. Not tested: real Gemini answers (no key yet); try the questions in demo script step 10 of the README.
 
+## 2026-10-16 (tidy-up)
+- Code scan for leftovers: no trailing spaces, no console output, no commented-out code, no unused components. Removed two extra blank lines (`app/globals.css`, `components/CreatorSignupWizard.js`), the five unused Next.js sample images in `public/`, and the unused `ORDER_STATUS_VALUES` constant.
+- New `.editorconfig` (UTF-8, LF, 2 spaces, final newline, trim trailing spaces). README: "How the main parts fit together" replaced by a "Project structure" table with rules of thumb.
+- Not done on purpose: moving the 57 flat files of `components/` into feature folders (many import paths, would clash with parallel work); decided to leave the folder flat. No behaviour change; lint, build and tests as before.
+
 ## 2026-10-12 (tests, interview summary, security review)
 - `npm test` (Node's built-in test runner, no new package): 18 tests for the order status machine (`lib/orderStatus.js`), the creator matching score (`lib/matching.js`) and the language files (same keys and placeholders in English and Turkish, no empty text). Breaking a status rule on purpose made two tests fail. Files: `tests/orderStatus.test.mjs`, `tests/matching.test.mjs`, `tests/locales.test.mjs`, `package.json` (`test` script).
 - `INTERVIEW.md`: one-page summary (problem, demo, what is real and simulated, technical decisions, known limits, how to grow it). README points to it and to `npm test`.

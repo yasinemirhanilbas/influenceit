@@ -23,7 +23,6 @@ const inputClass =
   "mt-2 min-h-12 w-full rounded-xl border border-field bg-paper px-4 text-base text-ink placeholder:text-ink-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-light";
 const buttonFocus = "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-light";
 
-
 // Same rules as creatorSignUpAction (the server checks again). Returns an error key or null.
 function checkBasic(data, categories) {
   const value = (key) => String(data.get(key) ?? "").trim();

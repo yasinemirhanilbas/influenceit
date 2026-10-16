@@ -74,12 +74,22 @@ Invalid steps are refused on the server (for example approving an unpaid order, 
 | Auth | Own small implementation (`scrypt` password hash, signed HTTP-only cookie) | No extra service to run; enough to show roles and permissions |
 | Text | `locales/en.js` and `locales/tr.js` | No hardcoded UI text, a new language is one new file |
 
-## How the main parts fit together
+## Project structure
 
-- `prisma/schema.prisma`: User, CreatorProfile, BrandProfile, Package, Order, Job, Application, SocialAccount.
-- `lib/queries.js`: cached database reads (`"use cache"` with tags); writes refresh them with `updateTag`.
-- `app/[lang]/...`: pages; `app/[lang]/auth/actions.js` and `app/[lang]/jobs/actions.js`: server actions that check the logged-in user and role on the server.
-- `lib/matching.js`: explainable creator suggestions (pure functions, easy to test).
+| Folder | What lives there |
+|---|---|
+| `app/[lang]/` | Pages for `/en` and `/tr`. Each feature has its own folder (`jobs`, `orders`, `messages`, `account`, `creators`, ...); server actions sit next to their pages in `actions.js`. |
+| `app/api/` | Routes that are not pages: `images` (public creator photos), `orders/[id]/video` (only the two parties), `assistant` (chat assistant). |
+| `components/` | Reusable parts. Files starting with `Order`, `Message`, `Creator`, `Job` belong to that feature; the rest are shared (header, footer, buttons). |
+| `lib/` | Logic without pages: database reads (`queries.js`), the order status machine (`orderStatus.js`, `orders.js`), matching, messaging, sessions, uploads, formatting, link targets (`routes.js`), allowed option lists (`options.js`). |
+| `locales/` | All UI text: `en.js` and `tr.js` with the same keys. |
+| `data/` | Fixed sample content for the home page (brands, testimonials, gallery). |
+| `prisma/` | Schema, seed script and seed photos (`npm run reset` rebuilds `dev.db`). |
+| `tests/` | `npm test`. |
+
+Rules of thumb: a new page goes in `app/[lang]/<feature>/`, its link in `lib/routes.js`, its text in both locale files; permission checks belong in the server action, not only in the interface; money is stored as a number plus a currency; the database is `dev.db` (not committed), uploads are in `storage/` (not committed). Editor basics are in `.editorconfig`.
+
+Database models: User, CreatorProfile, SocialAccount, BrandProfile, Package, Order, Job, Application, Conversation, Message.
 
 ## What we did on purpose not build
 
