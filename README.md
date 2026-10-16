@@ -2,6 +2,28 @@
 
 A two-sided marketplace prototype for Turkey where **brands find creators** and **creators find brands**, with a (simulated) escrow payment. It is a demo project, not a production service: everything runs locally and all people, brands and numbers are fictional.
 
+## For reviewers: how to run it (about 3 minutes)
+
+1. Install [Node.js](https://nodejs.org) 20 or newer (the LTS version is fine) and Git.
+2. Open a terminal and run:
+   ```bash
+   git clone https://github.com/yasinemirhanilbas/influenceit.git
+   cd influenceit
+   npm install
+   npm run reset
+   npm run dev
+   ```
+3. Open <http://localhost:3030> in your browser. The site is in English and Turkish (switch at the top right).
+4. Log in with a demo account (password `demo1234`): brand `northloom-coffee@example.com` or creator `mira-solis@example.com`. Use two browser windows (one private) to play both sides.
+5. Follow the **Demo script** below (3-5 minutes), or read `INTERVIEW.md` for the one-page summary.
+
+Good to know:
+- Nothing is real: all people, brands, prices and payments are fictional, and the payment form only simulates holding money in escrow. Do not type real card numbers.
+- No database or account setup is needed: `npm run reset` creates a local SQLite file with demo data and can be run again at any time to start clean.
+- The chat assistant (bottom right) needs a Google Gemini API key, which is not part of the repository. Without it the assistant says it is unavailable and everything else works. To try it, copy `.env.example` to `.env`, set `GEMINI_API_KEY` and `GEMINI_MODEL="gemini-3.5-flash"`, and restart `npm run dev`.
+- Run `npm test` for the automated tests (order status machine, creator matching, language files).
+- If port 3030 is taken, stop the other program or change the port in `package.json`.
+
 ## What works
 
 - Bilingual site (English and Turkish) with a calm light theme.

@@ -11,6 +11,9 @@ Approved changes, newest first. Format: date, what, files, why.
 - Why: visitors (and the demo audience) can get answers about how the marketplace works without leaving the page.
 - Verified with a browser and API test (23 checks) against a local fake Gemini server (same stream format): streamed answer incl. Turkish characters and events split across network chunks, key sent only as header, rules and knowledge in the system instruction, history cut to 10, invalid input rejected (too long, empty, wrong role, bad JSON), upstream error and empty answer become clean errors, rate limit, Turkish UI, Esc/focus, 375 px width, no page errors, and "not available" without a key. Not tested: real Gemini answers (no key yet); try the questions in demo script step 10 of the README.
 
+## 2026-10-16 (reviewer section in the README)
+- README: new section "For reviewers: how to run it" at the top (clone, install, reset, run, demo accounts, notes about fictional data, the optional assistant key and `npm test`), written for people who receive the repository link. Files: `README.md`, `CHANGELOG.md`.
+
 ## 2026-10-16 (tidy-up)
 - Code scan for leftovers: no trailing spaces, no console output, no commented-out code, no unused components. Removed two extra blank lines (`app/globals.css`, `components/CreatorSignupWizard.js`), the five unused Next.js sample images in `public/`, and the unused `ORDER_STATUS_VALUES` constant.
 - New `.editorconfig` (UTF-8, LF, 2 spaces, final newline, trim trailing spaces). README: "How the main parts fit together" replaced by a "Project structure" table with rules of thumb.
